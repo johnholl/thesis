@@ -1,0 +1,82 @@
+\section{Equilibria}
+
+Before we study learning dynamics it is important that we first discuss some properties of Nash equilibria in both SPGs and SGPGs. In the normal-form game setting existence can be taken for granted since normal-form games always admit Nash equilibria. However, a general existence theorem does not exist for stochastic games. In fact it has been demonstrated that there are stochastic games that admit {\em no Nash equilibria} [cite]. We will show that SPGs and SGPGs both admit pure Nash equilibria.
+
+\begin{thm}
+If $\Gamma$ is a stochastic global potential game then $\Gamma$ admits at least one pure Nash equilibria. In particular, any joint behavior that maximizes the global potential function is a Nash equilibrium.
+\end{thm}
+
+\begin{proof}
+Let $\pi$ be a pure joint behavior that maximizes $\Phi$, the global potential of $\Gamma$. If $\tau^i$ is an alternative behavior for player $i$, we know that, from any state $s$, we have
+
+$$
+\Phi(s, \pi) \geq \Phi(s, \asub{\pi}{\tau^i})
+$$
+
+and therefore
+
+$$
+V^i_{\pi}(s) \geq V^i_{\asub{\pi}{\tau^i}}(s)
+$$
+
+So $\pi$ is a Nash equilibrium.
+\end{proof}
+
+
+\begin{thm}
+if $\Gamma$ is a layered stochastic potential game then $\Gamma$ admits at least one pure Nash equilibrium.
+\end{thm}
+
+\begin{proof}
+Let $\Gamma$ be an $n$-player layered stochastic potential game. As usual denote the state partition by $\SS_1, \ldots, \SS_T$, the stage potential games by $G_s$ with potential $\phi_s$ and utilities $u^i_s$.
+
+We will construct a pure Nash equilibrium $\pi$ by a backwards iterative method through the partitions.
+
+First, for each state $s \in \SS_T$ let $a_s$ be a pure Nash equilibrium for the stage game $G_s$. Set $\pi_s \coloneq a_s$ and then $V^i_{\pi}(s) = u^i_s(a_s)$. Note that we haven't fully defined $\pi$ yet, but it is okay to talk about $V^i_{\pi}(s)$ for states $s \in S_T$ since we have described the behavior of $\pi$ at layer $T$.
+
+Next, for each state $s \in \SS_{T-1}$ consider the continuation game $G_s(V^i_{\pi})$ with utilities
+
+$$
+u^i_s(a) + \sum_{s' \in \SS_{T}}P_{ss'}(a)V^i_{\pi}(s')
+$$
+
+Since $G$ is a stochastic potential game, each $G_s(V^i_{\pi})$ is a potential game and hence admits a pure Nash equilibrium $a_s$. For the states in $\SS_{T-1}$ set $\pi_s \coloneq a_s$ and then $V^i_{\pi}(s) = u^i_s(a_s) + \sum_{s' \in \SS_T}P_{ss'}(a_s)V^i_{s'}$.
+
+Iterating this process, for each state $s \in S_j$ consider the continuation game $G_s(V^i_{\pi})$ with utilities
+
+$$
+u^i_s(a) + \sum_{s' \in \SS_{T}}P_{ss'}(a)V^i_{\pi}(s')
+$$
+
+This game admits a pure Nash equilibrium $a_s$. We set $\pi_s \coloneq a_s$ for all $s \in \SS_j$ and $V^i_{\pi} = u^i_s(a_s) + \sum_{s' \in \SS_T}P_{ss'}(a_s)V^i_{\pi}(s')$. 
+
+
+Eventually this process terminates, at which point it defines a pure joint strategy in every state ie a pure joint behavior $\pi$. Next we need to show that $\pi$ is a Nash equilibrium.
+
+Fix a player $i$ whose behavior under $\pi$ is $\pi^i$ and consider an alternative behavior $\tau^i$. Let $t_0$ be the last layer where $\pi^i$ and $\tau^i$ differ. That is, the largest $t_0$ such that there exists $s_0 \in \SS_{t_0}$ with$\pi^i_{s_0} \neq \tau^i_{s_0}$. Then the behaviors $\pi^i$ and $\asub{\pi}{\tau^i}$ correspond to strategies in the game $G_{s_0}(z(t_0+1))$. But, since we know that $\pi_s$ is a Nash equilibrium for the game $G_{s_0}(V^i_{\pi})$, it must be the case that
+
+$$
+u^i_s(\pi_s) + \sum_{s' \in \SS_{t_0+1}} P_{ss'}(\pi_s)V^i_{\pi}(s') \geq u^i_s(\asub{\pi_s}{\tau^i}) + \sum_{s' \in \SS_{t_0+1}} P_{ss'}(\asub{\pi_s}{\tau^i})V^i_{\pi}(s')
+$$
+
+Therefore $\pi$ is a Nash equilibrium.
+
+
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,125 @@
+\section{Background}
+
+We begin with a review of normal form games, normal-form potential games, and log-linear learning in normal form potential games. Then we will review basic concepts of stochastic games and their equilibiria.
+
+\subsection{Normal-form games}
+
+\begin{mydef} An $n$-player normal-form game $\Gamma = (\AA^i, u^i)$ consists of an action set $\AA^i$ for each player $i$ and a collection of {\em utility functions}
+
+%\begin{equation}\label{util}
+$$
+u^i: \times_{j \in \{1, \ldots, n\}} \AA^j \rightarrow \R
+$$
+%\end{equation}
+\end{mydef}
+
+In this work the $\AA^i$ will always be finite sets. 
+
+Let $\Delta \AA^i$ denote the simplex of discrete probability distributions over $\AA^i$. We will refer to an element $x^i$ of this distribution as a player strategy, and a {\em pure} strategy if the support of $x^i$ is a single action $a^i$. By a small abuse of notation we will call such pure strategies by their action name $a^i$. The utility functions can be linearly extended to the domain $\times_{j \in \{1, \ldots, n\}}  \AA^j$, and we will generally think of the $u^i$'s as having this enlarged domain.
+
+A list of stragies, one per player: $x = (x^1, \ldots, x^n)$ is called a {\em joint strategy}. Often, it is useful to consider two joint actions that differ by one or two players' actions. For notational convenience, we define the joint action $(x^1, \ldots , x^{i-1}, y^i, x^{i+1}, \ldots, x^n)$ by $\asub{x}{y^i}$ and the joint action $(x^1, \ldots , x^{i-1}, y^i, x^{i+1}, \ldots, x^{j-1}, y^j, x^{j+1}, \ldots,  x^n)$ by $\asub{x}{y^iy^j}$. A joint pure strategy is one where all players' strategies are pure.
+
+Let $G = (\AA^i, u^i)$ and $H = (\AA^i, v^i)$ be two normal-form games with the same action sets. We can define sum of these two games as the game $G + H = (\AA^i, u^i + v^i)$. The game $G - H$ can be defined similarly.
+
+
+
+\begin{mydef}
+For a game $\Gamma = (\AA^i, u^i)$ and player $i$, a strategy $x^i \in \Delta \AA^i$ is said to be a best response to $\{x^j\}_{j \neq i}$ if
+$$
+u^i(x^1, \ldots, x^i, \ldots, x^n) \geq u^i(x^1, \ldots, y^i, \ldots x^n)
+$$
+
+for any $y^i \in \AA^i$.
+
+\end{mydef}
+
+
+A Nash equilibrium is simply a joint strategy such that each strategy is a best response to all others:
+
+\begin{mydef}
+A Nash equilibrium is a set of strategies $x^i \in \Delta \AA^i$ such that for all $i$, the player strategy $x^i$ is a best response to $\{x^j\}_{j \neq i}$
+\end{mydef}
+
+A {\em pure} Nash equilibrium is a Nash equilibrium such that each player strategy is a pure strategy.
+
+\subsection{Normal-form potential games}
+
+Potential games are a class of normal-form games that admit pure Nash equilibria as well as convergent learning dynamics.
+
+\begin{mydef}
+A potential game is an $n$-player game $\Gamma = (\AA^i, u^i)$ together with a function (called a {\em potential function}) 
+$$
+\phi: \times_i \AA^i \rightarrow \R
+$$
+ such that for any joint strategy $x = (x^1, \ldots, x^n)$ and player strategy $y^i \in \AA^i$,
+
+%\begin{equation} \label{pot}
+$$
+\phi(\asub{x}{y^i}) - \phi(x) = u^i(\asub{x}{y^i}) - u^i(x)
+$$
+%\end{equation}
+\end{mydef}
+
+
+This equation says that when a player unilaterally changes the joint action (that is, they change their action and all other players maintain the same action), the change in that players utility is equal to the change in the potential function. This also means that potential functions are unique up to constant shifts.
+
+% There are two common generalizations of potential games: {\em weighted potential games} and {\em ordinal potential games}.
+
+The following are several useful facts about potential functions and their equilibria.
+
+\begin{thm}
+Let $\Gamma$ be a potential game with potential function $\phi$. Any pure joint strategy $x$ that maximizes $\phi$ is a Nash equilibria.
+\end{thm}
+
+
+
+\begin{thm}
+Let $\Gamma = (\AA^i, u^i)$ be a normal-form game. Then $\Gamma$ is a potential game if and only if for any pure joint stragegy $a$, players $i$ and $j$, and pure player strategies $b^i \in \AA^i$ and $b^j \in \AA^j$
+
+$$
+u^i(\asub{a}{b^ib^j}) - u^i(\asub{a}{b^j}) + u^j(\asub{a}{b^j}) - u^j(a) = u^j(\asub{a}{b^ib^j}) - u^j(\asub{a}{b^i}) + u^i(\asub{a}{b^i}) - u^i(a)
+$$
+\end{thm}
+
+
+\subsection{Stochastic games}
+
+Finally, we introduce the definition of a stochastic game and their Nash equilibria.
+
+\begin{mydef}
+An $n$-player stochastic game $\Gamma$ consists of a state space $\SS$, action sects $\AA^i$ for each player, and games $\{G_s\}_{s \in \SS}$ which will be called "stage games", and trainsition probabilities $P_{ss'}(x)$ for each state pair $s, s' \in \SS$ and joint strategy $x$.
+\end{mydef}
+
+In this work we will always assume that $| \SS |$ is finite and that the action sets are finite.
+
+The stochastic game framework lies at the intersection of game theory and control theory. By introducing a state space and transition dynamics it extends the normal-form game from game theory. A normal-form game can be viewed as a stochastic game with one state and trivial transition dynamics. On the other hand, it extends the Markov decision process (MDP) framework to the multi-agent setting. An MDP can be viewed as a stochastic game with one player. 
+
+It will also be useful to restrict the form of stochastic games for later analysis in the paper. For this purpose we introduce the following definition:
+
+\begin{mydef}
+A stochastic game $\Gamma$ is said to be {\em layered} if there exists a partition of the state space $\SS = \SS_1 \cup \ldots \cup \SS_T$ such that for $s_i \in \SS_i$ and $s_j \in \SS_j$ we have
+
+$$
+P_{s_is_j} = 0
+$$
+
+if $j \neq i + 1$.
+\end{mydef}
+
+
+In normal-form games, each player chooses a player strategy. In stochastic games, a player must choose a strategy in every state. We refer to such a choice as a behavior, and denote it by $\pi^i \in \times_{s \in \SS} \AA^i$. The specific strategy employed in state $s$ will be denoted by $\pi^i_s$. A joint behavior is a collection of behaviors for all players $\pi = (\pi^i, \ldots, \pi^n)$. It is useful to introduce notation for joint behaviors that differ by one or two players' behaviors. Let $\tau^i$ be a behavior for player $i$. We denote the joint behavior $(\pi^1, \ldots, \pi^{i-1}, \tau^i, \pi^{i+1}, \ldots \pi^n)$ by $\asub{\pi}{\tau^i}$. Similarly, if we change two players behaviors, we denote the joint strategy by $\asub{\pi}{\tau^i\tau^j}$. Finally, we will often modify a joint behavior $\pi$ be changing a players strategy in a single state $s$ from pure strategy $a^i_s$ to $b^i_s$. We will denote the modified joint behavior by $\asub{\pi}{b^i_s}$ or $\asub{\pi}{b^i}$ when the particular state is clear.
+
+In normal-form games, players wish to maximize their utilities. In stochastic games, players wish to maximize their returns. A return is simply the sum of utilities from the stage games the player encounters. In analogy with the reinforcement learning literature, we let $V^i_{\pi}(s)$ denote the expected return for player $i$ starting from state $s$ when players employ the joint behavior $\pi$. We let $Q^i_{\pi}(s, a)$ denote the expected return for player $i$ starting from state $s$ when they first take action $a$ in state $s$ while other players play $\pi_s$, and then all players play $\pi$ in subsequent states.
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,72 @@
+\documentclass[12pt,oneside]{report}
+\usepackage{thesis-sty}
+
+
+\begin{document}
+
+\addtocontents{toc}{\protect\setcounter{tocdepth}{-1}}
+\input{chapters/frontmatter}
+\onehalfspacing %can also use \doublespacing
+
+\chapter{Introductory Material}
+\pagenumbering{arabic}
+\label{intro}
+\input{chapters/intro}
+
+\chapter{Stochastic Extensions of Potential Games}
+\label{spg}
+\input{chapters/sepg}
+
+
+\chapter{Learning Methods in Stochastic Potential Games and Stochastic Global Potential Games}
+\label{rmsg}
+\input{chapters/lmspgsgpg}
+
+\chapter{Q-Learning Approaches to Dynamic Multi-Driver Dispatching and Repositioning}
+\label{mddqn}
+\input{chapters/mddqn}
+
+\chapter{Future Work}
+\label{futurework}
+\input{chapters/futurework}
+
+
+%\appendix
+%\label{basics}
+%\input{appendices/basics}
+
+\singlespacing
+
+\bibliography{thesis-bib}
+\addcontentsline{toc}{chapter}{Bibliography}
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

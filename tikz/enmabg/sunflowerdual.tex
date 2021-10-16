@@ -1,0 +1,75 @@
+\begin{tikzpicture}[scale=2.5]
+\draw[opacity=0.4] (0,0) circle (1);
+\foreach \s in {1,2,3,4,5,6}
+{
+	\coordinate (a\s) at ({90+60*\s}:0.6);
+	\draw[fill=black] (a\s) circle (1.2pt);
+	\coordinate (b\s) at ({60*\s}:1);
+	\draw[fill=black] (b\s) circle (1.2pt);
+	\coordinate (c\s) at ({30+60*\s}:1);
+	\coordinate (d\s) at ({60*\s}:0.67);
+	\draw[fill=white] (c\s) circle (1.2pt);
+	\draw[fill=white] (d\s) circle (1.2pt);
+};
+\coordinate (e1) at (-0.2,0);
+\coordinate (e2) at (0.2,0);
+\draw (a1)--(a2)--(a3)--(a4)--(a5)--(a6)--(a1);
+\draw (a3)--(a6);
+\draw (a5) -- (b1)--(a6)--(b2)--(a1)--(b3)--(a2)-- (b4)--(a3) -- (b5)--(a4)--(b6)--(a5);
+\draw[loosely dashed] (e1)--(e2);
+\draw[loosely dashed] (e1)--(d2);
+\draw[loosely dashed] (e1)--(d3);
+\draw[loosely dashed] (e1)--(d4);
+\draw[loosely dashed] (e2)--(d5);
+\draw[loosely dashed] (e2)--(d6);
+\draw[loosely dashed] (e2)--(d1);
+\draw[loosely dashed] (d1)--(c1)--(d2)--(c2)--(d3) -- (c3) -- (d4) -- (c4)--(d5)--(c5)--(d6)--(c6) --(d1);
+
+\foreach \s in {1,2,3,4,5,6}
+{
+\draw[fill=white] (c\s) circle (1.2pt);
+\draw[fill=white] (d\s) circle (1.2pt);
+};
+\draw[fill=white] (e1) circle (1.2pt);
+\draw[fill=white] (e2) circle (1.2pt);
+
+\def\a{2.75}
+\draw[opacity=0.4] (\a,0) circle (1);
+\foreach \s in {1,2,3,4,5,6}
+{
+	\coordinate (f\s) at ($(\a,0)+({90+60*\s}:0.6)$);
+	\draw[fill=black] (f\s) circle (1.2pt);
+	\coordinate (g\s) at ($(\a,0)+({60*\s}:1)$);
+	\draw[fill=black] (g\s) circle (1.2pt);
+	\coordinate (h\s) at ($(\a,0)+({30+60*\s}:1)$);
+	\coordinate (i\s) at ($(\a,0)+({60*\s}:0.67)$);
+};
+\coordinate (j1) at (\a-0.2,0);
+\coordinate (j2) at (\a+0.2,0);
+\draw (f1)--(f2)--(f3)--(f4)--(f5)--(f6)--(f1);
+\draw (f3)--(f6);
+\draw (f5) -- (g1)--(f6)--(g2)--(f1)--(g3)--(f2)-- (g4)--(f3) -- (g5)--(f4)--(g6)--(f5);
+\draw[loosely dashed] (i1)--(h1)--(i2)--(h2)--(i3) -- (h3) -- (i4) -- (h4)--(i5)--(h5)--(i6)--(h6) --(i1);
+
+\draw[line width=0.5mm,cyan] (j1)--(j2);
+\draw[line width=0.5mm,cyan] (j1)--(i2);
+\draw[line width=0.5mm,cyan] (j1)--(i3);
+\draw[line width=0.5mm,cyan] (j1)--(i4);
+\draw[line width=0.5mm,cyan] (j2)--(i5);
+\draw[line width=0.5mm,cyan] (j2)--(i6);
+\draw[line width=0.5mm,cyan] (j2)--(i1);
+\draw[line width=0.5mm,cyan] (i1) --(h1);
+\draw[line width=0.5mm,cyan] (i2) --(h2);
+\draw[line width=0.5mm,cyan] (i3) --(h3);
+\draw[line width=0.5mm,cyan] (i4) --(h4);
+\draw[line width=0.5mm,cyan] (i5) --(h5);
+\draw[line width=0.5mm,cyan] (i6) --(h6);
+
+\foreach \s in {1,2,3,4,5,6}
+{
+	\draw[line width=0.5mm,cyan,fill=white] (h\s) circle (1.2pt);
+	\draw[line width=0.5mm,cyan,fill=white] (i\s) circle (1.2pt);
+};
+\draw[line width=0.5mm,cyan,fill=white] (j1) circle (1.2pt);
+\draw[line width=0.5mm,cyan,fill=white] (j2) circle (1.2pt);
+\end{tikzpicture}

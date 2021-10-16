@@ -1,0 +1,210 @@
+\section{Log-linear learning with inertia}
+
+Log-linear learning is an attractive learning method because it converges to the set of potential maximizing joint strategies. This is in contrast to joint strategy fictitious play with inertia, which is guaranteed to converge to a single pure strategy Nash equilibrium in potential games, but this equilibrium may not be potential maximizing. In this section we define log-linear learning with inertia, which has the following two properties:
+
+\begin{enumerate}
+    \item It converges to a single pure strategy Nash equilibrium (rather than a set) in potential games.
+    \item The Nash equilibrium it converges to is a potential function maximizer
+\end{enumerate}
+
+This algorithm is useful in its own right in the repeated normal-form game setting, however we are interested in these properties because they allow us to generalize the algorithm to one which converges in stochastic potential games. Specifically, the first property will guarantee convergence in SPGs, and the second property will guarantee that the limiting behavior belongs to simultaneously potential maximizing, a special subclass of Nash equilibria in SPGs.
+
+
+
+
+
+
+
+
+\subsection{definition of algorithm}
+
+Let $G$ be a potential game. To describe the collection of perturbed process one must first fix an inerita parameter $0 < \kappa < 1$. We describe the parametrized perturbed processes of log-linear learning with inertia $P_{\kappa}^{\epsilon}$. At time $t$ a player $i$ is selected uniformly at random. Their behavior is updated as follows:
+
+\begin{enumerate}
+\item If $a^i(t-1)$ was a best response to $a^{-i}(t-1)$ then with probability $1-\epsilon^{\kappa}$ set $a^i(t) = a^i(t-1)$ (we will refer to this as the inertia of the process)
+\item Otherwise, select $a^i(t)$ according to the probability distribution
+$$
+p(a^i) = \dfrac{\epsilon^{-u^i(a^i, a^{-i}(t-1))}}{\sum_{b^i} \epsilon^{-u^i(b^i, a^{-i}(t-1)}}
+$$
+\end{enumerate}
+
+We'll refer to the unperturbed process $P^0$ as "asynchronous best response with inertia". In this process, at time $t$ a player $i$ is selected uniformly at random. If $a^i(t-1)$ was a best response to $a^{-i}(t-1)$ then player $i$ repeats that action. Otherwise, they select a best response to $a^{-i}(t-1)$. We would like to show that the stochastically stable states of log-linear learning with inertia are potential maximizing behaviors, and that under log-linear learning with inertia behavior converges to a fixed pure Nash equilibrium. We begin by showing that log-linear learning indeed defines a regular perturbed Markov process with the unperturbed process being asynchronous best response with inertia.
+
+
+
+
+
+
+
+
+
+\subsection{convergence of algorithm in normal form potential games}
+
+\begin{lem}
+Log-linear learning with inertia induces a regular perturbed Markov process where the unperturbed Markov process is an asynchronous best response process with inertia and the resistance of any feasible transition $a^0 \rightarrow a^1$ is 
+$$
+R(a^0 \rightarrow a^1) = max_{a^i_* \in \AA^i} u^i(a^i_*, a^{-i}_0) - u^i(a_1)
+$$
+
+if $a^i_0$ is not a best response to $a^{-i}_0$ and
+
+$$
+R(a^0 \rightarrow a^1) = max_{a^i_* \in \AA^i} u^i(a^i_*, a^{-i}_0) - u^i(a_1) + \kappa
+$$
+
+if $a^i_0$ is a best response to $a^{-i}_0$.
+
+\end{lem}
+\begin{proof}
+It is straightforward to see that $P^{\epsilon}$ defines a finite aperiodic and irreducible process over the joint action space. So, we only need to show that $P^{\epsilon}$ approaches $P^0$ at an exponentially smooth rate and compute the associated resistances.
+
+Let $a_0 \rightarrow a_1$ be a feasible transition which means that $a_1 = (a^i_1, a_0)$. That is, $a_1$ only differs from $a_0$ in a single players action.
+
+First, suppose that $a^i_0$ is not a best response to $a^{-i}_0$. Then
+
+$$
+P^{\epsilon}_{a_0 \rightarrow a_1} = \dfrac{1}{n} \dfrac{\epsilon^{-u^i(a_1)}}{\sum_{b^i} \epsilon^{-u^i(b^i, a^{-i}_0}}
+$$
+
+Let $V^i(a_0^{-i}) = max_{a^i_* \in \AA^i} u^i(a^i_*, a^{-i}_0)$. Then
+
+\begin{align*}
+\lim_{\epsilon \rightarrow 0} \dfrac{P^{\epsilon}_{a_0 \rightarrow a_1}}{\epsilon^{V^i(a_0^{-i}) - u^i(a_1)}} \\
+= \lim_{\epsilon \rightarrow 0} \dfrac{1}{n} \dfrac{\epsilon^{-V^i(a_0^{-i})}}{\sum_{b^i} \epsilon^{-u^i(b^i, a^{-i}_0}} \\
+= \lim_{\epsilon \rightarrow 0} \dfrac{1}{n} \dfrac{1}{\sum_{b^i} \epsilon^{V^i(a_0^{-i})-u^i(b^i, a^{-i}_0}}
+\end{align*}
+
+and $\lim_{epsilon \rightarrow 0} \epsilon^{V^i(a_0^{-i})-u^i(b^i, a^{-i}_0}$ is an indicator that is supported on the best responses of $a^{-i}_0$. Therefore,
+
+$$
+\lim_{\epsilon \rightarrow 0} \dfrac{P^{\epsilon}_{a_0 \rightarrow a_1}}{\epsilon^{V^i(a_0^{-i}) - u^i(a_1)}} = \dfrac{1}{n |BR(a^{-i}_0|}
+$$
+
+and so when $a^i_0$ is not a best response to $a^{-i}_0$, the resistance of the transition $a_0 \rightarrow a_1$ is $V^i(a_0^{-i}) - u^i(a_1)$.
+
+Now suppose that $a^i_0$ is a best response to $a^{-i}_0$. Then
+
+$$
+P^{\epsilon}_{a_0 \rightarrow a_1} = \dfrac{\epsilon^{\kappa}}{n} \dfrac{\epsilon^{-u^i(a_1)}}{\sum_{b^i} \epsilon^{-u^i(b^i, a^{-i}_0}}
+$$
+
+The additional $\epsilon^{\kappa}$ terms comes from the fact that, if player $i$ is selected, they will keep action $a^i_0$ with probability $1-\epsilon^{\kappa}$ due to inertia. This expression differs from [labelled earlier transition probability] by a factor of $\epsilon^{\kappa}$, and hence the resistance of this transition will be larger by $\kappa$:
+
+$$
+R(a_0 \rightarrow a_1) = V^i(a_0^{-i}) - u^i(a_1) + \kappa
+$$
+\end{proof}
+
+So far the role of $\kappa$ has been somewhat mysterious. We attempt to give an intuitive explanation of its role now. In the original log-linear learning algorithm, potential maximizing strategies have minimal stochastic potential, and therefore they represent stochastically stable states of the algorithm. The introduction of inertia will increase the stochastic potential of some strategies, and if $\kappa$ is large this could result in potential maximizers no longer having minimal stochastic potential. However, regardless of how close to zero one makes $\kappa$, log-linear learning with inertia maintains the desirable property that it converges to a single pure strategy. Therefore, if we make $\kappa$ small enough, we can guarantee that the algorithm converges to a single potential maximizing strategy.
+
+
+\begin{mydef}
+Let $G$ be a potential game with potential function $\phi$. We define the potential gap $g_{\phi}$ to be the difference between the maximal potential value and the second-largest potential value. Explicitly, let $\BB = \{a \in \AA | a \notin \text{argmax}_{a \in \AA} \phi(a)  \}$
+$$
+g_{\phi} = \text{max}_{a \in \AA} \phi(a) - \text{max}_{b \in \BB} \phi(b)
+$$
+\end{mydef}
+
+
+\begin{mydef}
+Let $\PP = \{a_0 \rightarrow \cdots \rightarrow a_m\}$ be a feasible path in a log-linear learning with inertia process $P_{\kappa}^{\epsilon}$. Define $B(\PP)$ to be the number of times that the path leaves a best response.
+\end{mydef}
+
+
+
+
+\begin{lem}
+Let $G$ be an $n$-player potential game with potential function $\phi$. Let $\PP = \{a_0 \rightarrow \cdots \rightarrow a_m\}$ be a feasible path of the process $P_{\kappa}^{\epsilon}$. Then 
+
+$$
+R(\PP^R) - R(\PP) = \phi(a_m) - \pi(a_0) + \kappa \left( B(\PP^R) - B(\PP) \right)
+$$
+\end{lem}
+
+\begin{proof}
+First, we focus on a single directed edge $a_j \rightarrow a_{j+1}$ in the path and its reverse $a_{j+1} \rightarrow a_j$. Let $i$ be the player whose action changes between these two strategies. From the previous lemma we know
+
+\begin{equation}
+    R(a_j \rightarrow a_{j+1} = 
+     \begin{cases} 
+      V^i(a_j^{-i}) - u^i(a_{j+1})  & \text{if } a_j^{i} \text{ is not a best response to } a_j^{-i} \\
+      V^i(a_j^{-i}) - u^i(a_{j+1}) + \kappa & \text{if } a_j^{i} \text{ is a best response to } a_j^{-i}
+   \end{cases}
+\end{equation}
+
+Also, since $a_j$ and $a_{j+1}$ only differ in the action of player $i$, 
+
+$$
+V^i(a_j^{-i}) = V^i(a_{j+1}^{-i})
+$$
+
+So then,
+
+\begin{equation}
+    R(a_{j+1} \rightarrow a_j) - R(a_j \rightarrow a_{j+1} = 
+     \begin{cases} 
+      \phi(a_{j+1}) - \phi(a_j)  & \text{if } a_j^{i} \text{ and } a_{j+1}^i \text{ are both best responses to } a_j^{-i} \\
+      \phi(a_{j+1}) - \phi(a_j)  & \text{if } a_j^{i} \text{ and } a_{j+1}^i \text{ are both not best responses to } a_j^{-i} \\
+      \phi(a_{j+1}) - \phi(a_j) - \kappa  & \text{if } a_j^{i} \text{ is a best response and } a_{j+1}^i \text{ is not a best response } a_j^{-i} \\
+      \phi(a_{j+1}) - \phi(a_j) + \kappa  & \text{if } a_j^{i} \text{ is not a best response and } a_{j+1}^i \text{ is a best response } a_j^{-i} \\
+   \end{cases}
+\end{equation}
+
+We obtain the above formula since the $V^i$'s cancel in the difference, and we can equate a difference of player $i$ utilities with a difference in the potential function. Summing these pairwise differences gives us the following formula for the difference of path resistances:
+
+\begin{equation}
+R(\PP^R) - R(\PP) &= \sum_{j} R(a_{j+1} \rightarrow a_j) - R(a_j \rightarrow a_{j+1} \\
+& = \left[ \sum_{j} \phi(a_{j+1}) - \pi(a_j) \right] + \kappa B(\PP^R) - \kappa B(\PP) \\
+& = \phi(a_m) - \phi(a_0) + \kappa \left( B(\PP^R) -  B(\PP) \right)
+\end{equation}
+
+\end{proof}
+
+
+With this lemma, we can now prove the main theorem of this section.
+
+\begin{theorem}
+Let $G$ be an $n$-player potential game with potential function $\phi$, and let $\kappa$ be a positive constant such that $\kappa < \frac{g_{\phi}}{|\AA|}$. Then the stochastically stable states of the process $P_{\kappa}^{\epsilon}$ are contained in the set of potential function maximizers.
+
+\begin{proof}
+
+Our proof will proceed in a similar fashion to [Marden Proposition 3.1]. Let $a$ be a strategy with minimal stochastic potential that does not maximize $\phi$, realized by a rooted resistance tree $T$. Let $a^*$ be a strategy that is a potential function maximizer. 
+
+% The joint strategies $a$ and $a^*$ differ by at most $n$ player strategies, and so there is a feasible path $\PP = \{ a = a_0 \rightarrow a_1 \rightarrow \cdots \rightarrow a_m = a^* \}$from $a$ to $a^*$ where $m \leq n$. Consider the modified graph $T^*$ which takes the graph 
+
+Let $\PP$ be the path contained in $T$ that begins at $a^*$ and ends at the root $a$. This path has length at most $|\AA|$. Consider the modified tree $T^*$ which begins with $T$ and replaces $\PP$ with $\PP^R$. $T^*$ is rooted at $a^*$. The resistance of $T^*$ is
+
+$$
+R(T^*) = R(T) + R(\PP^R) - R(\PP)
+$$
+
+By the lemma,
+
+\begin{equation}
+R(\PP^R) - R(\PP) & = \phi(a) - \phi(a^*) + \kappa \left( B(\PP^R) - B(\PP) \right) \\
+& \leq \phi(a) - \phi(a^*) + \kappa \cdot |\AA| \\
+& < \phi(a) - \phi(a^*) +  \frac{g_{\phi}}{|\AA|} \cdot |\AA| \\
+& = \phi(a) - \phi(a^*) + g_{\phi} \\
+& \leq 0
+\end{equation}
+
+The first inequality comes from the fact that $B(\PP^R)$ is at most the length of the path $\PP$, and $B(\PP)$ is at least zero. The final inequality is because the gap between the largest value of $\phi$ and the second largest value of $\phi$ is bounded above by the gap between the largest value of $\phi$ and the value of $\phi$ at any arbitrary action that does not maximize the potential function.
+
+The above calculation demonstrates that $R(T^*) < R(T)$, which contradicts the hypothesis that $a$ has minimal stochastic potential. Therefore a strategy that is stochastically stable must necessarily maximize the potential function.
+
+\end{proof}
+
+\end{theorem}
+
+
+Let us reflect on this result for a moment. In standard log-linear learning the behavior is guaranteed to converge to potential maximizing behavior. However, suppose $a$ and $b = \asub{a}{b^i}$ are two potential maximizing behaviors differing in a single player action. If the unperturbed log-linear learning process produces action $a$ at time $t$, it will be indifferent to actions $a$ and $b$ at the next timestep. The goal of inertia is to stick with action $a$ once it is played. As we saw above, this was not done naively; $\kappa$ had to be selected carefully. The reason for this is that inertia is imparted to all best-responses, not just those that maximize potential. If $\kappa$ is chosen to be too large (relative to $g_{\phi}$) it is possible for behavior to get trapped in a Nash equilibrium that is not potential maximizing. As an alternative, we could have formulated inertia in a way that directly calls upon the potential function. Our choice is motivated by the intuition that in real strategic interactions it may be reasonable for individual players to know whether they are playing a best response but unreasonable for them to know if they are maximizing a potential function. 
+
+At the start of the section we described two desirable properties of log-linear learning with inertia: 
+
+\begin{enumerate}
+    \item It converges to a single pure strategy Nash equilibrium (rather than a set) in potential games.
+    \item The Nash equilibrium it converges to is a potential function maximizer
+\end{enumerate}
+
+% The first property follows from \ref{thm:evconv}. That is, we know that the limiting distribution of the perturbed stationary distributions is a stationary distribution of the unperturbed process. In our case, the unperturbed process of log-linear learning with inertia is asynchronous best reply with inertia. That process has a stationary distribution for each pure Nash equilibrium, such that the corresponding distribution is fully supported on the equilibrium. The second property follows from the above theorem. 
+

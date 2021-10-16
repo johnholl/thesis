@@ -1,0 +1,133 @@
+\section{Definitions}
+\label{sec:def}
+
+In this section we will present the two basic types of stochastic games that will be studied in the next two chapters: SPGs and SGPGs. Before stating these definitions we will give some motivation for each of them.
+
+\subsubsection{Motivation for SPGs} 
+In \cite{zerosumstochastic} the authors study the convergence properties of best response dynamics in {\em zero sum} stochastic games. For this purpose they study {\em continuation games}. Given a stochastic game $G$ with state space $\SS$ and a set of continuation vectors $z^i = \{z^i_s\}_{s \in \SS}$, one for each player $i$, one can define the following (normal form, {\em not} stochastic) continuation games $G_s(z)$:
+
+\begin{equation}
+u_{s}^i(a) + \sum_{s' \in \SS} P_{ss'}(a)z^i_{s'}
+\label{eq:continuation}
+\end{equation}
+
+These define normal form games for every state $s$. This equation is closely related to the Bellman equation in MDPs. Specifically, if we choose the continuation vectors to be the value functions $V^i_{\pi}(s')$ for a joint behavior $\pi$, then this equation is exactly the recursive definition of the value function. The point of defining a continuation game is that it can capture both short term (utility) and long term (continuation payoff / value) considerations in a single normal form game.
+
+One of the learning processes - ``stopping time best response dynamics'' - defined in \cite{zerosumstochastic}, makes use of a two phase learning process. In the first phase, at learning step $t$, players are presented with zero sum continuation games at each state, defined by continuation payoffs $z^i_s(t)$. Players converge to minimax behavior (or more accurately, nearly converge) $\tilde{\pi}_s$ in all of these continuation games using normal best response dynamics on each game. In the second phase, the continuation value $z^i_s(t+1)$ becomes the minimax value of the continuation game from the first phase. This algorithm, and specifically phase one, a priori relies on the fact that each time a new continuation game is defined, that game will be zero sum. This is a somewhat special property of zero sum games: if every stage game is a zero sum game, then automatically each continuation game one encounters will also be zero sum.
+
+By comparison, suppose we have a stochastic game where every stage game is a potential game. In this case, one cannot expect every continuation game to be a potential game. To force this to be true, we must also make assumptions about the transition probabilities in the game. It will be these transition probabilities that define SPGs.
+
+
+\subsubsection{Motivation for SGPGs}
+
+One traditional motivation for the study of potential games is that the potential function may be a kind of "system-wide" welfare function. As discussed in Chapter 1, if one starts with a welfare function, one can always construct a potential game where the welfare function is its potential function. From this perspective, the subset of {\em potential maximizing} equilibria in potential games are important, since they are stable behaviors that maximize the potential function. In SPGs, all continuation games will be potential games, but we will give examples of SPGs that have no notion of a "global potential", that is, a potential function whose inputs are player behaviors. SGPGs will be defined by the existence of such a global potential. As a result, SGPGs will have a notion of equilibrium that is completely analogous to potential maximizing equilibria in potential games.
+
+
+\subsection{Definition of stochastic potential games}
+
+\begin{mydef}
+We say that a stochastic game $G$ has {\em modular dynamics} if, for any two players $i$ and $j$, any joint action $a \in \times_i \AA^i$, and any states $s, s' \in \SS$:
+
+\begin{equation}
+P_{ss'}(a) + P_{ss'}(\asub{a}{b^ib^j}) = P_{ss'}(\asub{a}{b^i}) + P_{ss'}(\asub{a}{b^j})
+\label{eq:modular}
+\end{equation}
+\end{mydef}
+
+\label{def:modular}
+
+
+\begin{mydef}
+We say that a stochastic game $G$ is a {stochastic potential game} if
+
+\begin{enumerate}
+\item Every stage game $G_s$ is a potential game and
+
+\item $G$ has modular dynamics
+\end{enumerate}
+
+\label{def:spg}
+\end{mydef}
+
+
+We would like to show that the two properties of SPGs guarantee that every continuation game is a potential game. We will make use of the following lemma from \cite{monderer1996potential}:
+
+\begin{lem}
+Let $G$ and $H$ be two potential games with potential functions $\phi$ and $\psi$ respectively. The games $G + H$ and $G - H$, defined by adding and subtracting payoffs respectively, are potential games with potential functions $\phi + \psi$ and $\phi - \psi$ respectively.
+\label{lem:sumpotential}
+\end{lem}
+
+
+\begin{thm}
+Consider a stochastic game $G$. Every continuation game is a potential game if and only if $G$ is a stochastic potential game.
+
+\begin{proof}
+
+Suppose $G$ is a stochastic potential game. Fix $z$, a collection of continuation vectors for each player and consider the continuation game $G_s(z)$ with payoffs
+
+$$
+u^i_s(a) + \sum_{s' in \SS} P_{ss'}(z^i_{s'})
+$$
+
+The stage game $G_s$ is a potential game since $\Gamma$ is a stochastic potential game, and so by the lemma it suffices to show that the game $D_s(z) = G_s(z) - G_s$ is a potential game. This game has utilities
+
+$$
+\sum_{s' \in \SS} P_{ss'}(a)z^i_{s'}
+$$
+
+We will refer to $D_s(z)$ as the "delay game".
+
+By \ref{cor:commsquare}, it suffices to check that for any players $i$ and $j$, any joint action $a$, and any player actions $b^i \in \AA^i$ and $b^j \in \AA^j$ we have
+
+\begin{align*}
+&\sum_{s'} P_{ss'}(\asub{a}{b^ib^j})z^i_{s'} - \sum_{s'} P_{ss'}(\asub{a}{b^j})z^i_{s'} + \sum_{s'} P_{ss'}(\asub{a}{b^j})z^j_{s'} - \sum_{s'} P_{ss'}(a)z^j_{s'} \\
+= &\sum_{s'} P_{ss'}(\asub{a}{b^ib^j})z^i_{s'} - \sum_{s'} P_{ss'}(\asub{a}{b^i})z^j_{s'} + \sum_{s'} P_{ss'}(\asub{a}{b^i})z^i_{s'} - \sum_{s'} P_{ss'}(a)z^i_{s'} 
+\end{align*}
+
+which can be rearranged to
+
+\begin{align}
+&\sum_{s'} \left[P_{ss'}(a) + P_{ss'}(\asub{a}{b^ib^j}) - P_{ss'}(\asub{a}{b^i}) - P_{ss'}(\asub{a}{b^j}) \right] z^i_{s'} \nonumber \\
+= &\sum_{s'} \left[P_{ss'}(a) + P_{ss'}(\asub{a}{b^ib^j}) - P_{ss'}(\asub{a}{b^i}) - P_{ss'}(\asub{a}{b^j}) \right] z^j_{s'} \label{eq:continuation}
+\end{align}
+
+And, since, the dynamics are modular, all terms in both the left-hand and right-hand sum are zero. Therefore the continuation game is a potential game. 
+
+Now, assume every continuation game is a potential game. Then in particular this is true when $z$ is identically zero, and therefore the stage games of $G$ are potential games. Finally we need to show that this implies $G$ has modular dynamics. 
+
+Fix a players $i$ and $j$, states $s$ and $s'$, joint strategy $a$ and player strategies $b^i$ and $b^j$. Let $z^j$ be the zero vector, and $z^i$ be zero everywhere except at state $s'$. Then equation \ref{eq:continuation} reduces to
+
+$$
+P_{ss'}(a) + P_{ss'}(\asub{a}{b^ib^j}) - P_{ss'}(\asub{a}{b^i}) - P_{ss'}(\asub{a}{b^j}) = 0
+$$
+
+Hence $G$ has modular dynamics.
+
+\end{proof}
+
+\label{thm:contmodpg}
+\end{thm}
+
+
+
+\subsection{Stochastic Global Potential Games}
+
+Notice that while our definition of SPGs places a potential at each state, there is not necessarily a unified potential function defined over the stochastic game. A different approach to extending potential games is to draw the analogy as follows: that the definition of a normal form potential game uses a potential function over strategies, and so a stochastic version should define a potential function over {\em behaviors}. We will call this a {\em stochastic global potential game} (SGPG).
+
+\begin{mydef}
+A stochastic global potential game is a stochastic game $\Gamma$ together with a {\em global potential function}:
+
+$$
+\Phi: \SS \times \Pi^1 \times \cdots \Pi^n \rightarrow \R
+$$
+
+such that for every state $s$, joint behavior $\pi$, and player $i$ with behavior $\tau^i$,
+
+$$
+\Phi(s, \asub{\pi}{\tau^i}) - \Phi(s, \pi) = V^i_{\asub{\pi}{\tau^i}}(s) - V^i_{\pi}(s)
+$$ 
+
+\label{def:sgpg}
+\end{mydef}
+
+Stochastic global potential games are amenable to reinforcement learning methods because they admit acyclic "strict better reply graphs". This essentially means that if players sequentially make improvements to their own behaviors, their joint behavior will eventually constitute a Nash equilibrium. However, determining whether a stochastic game is an SGPG is not straightforward. A priori, there is no way to check whether a global potential function exists other than to construct one, and the temporally extended nature of the global potential function may make this difficult. In contrast, SPGs are characterized by temporally local conditions on stage games and one-step transition probabilities.

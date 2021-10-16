@@ -1,0 +1,107 @@
+\section{Reinforcement Learning}
+
+The previous section discussed MDPs, which describe a type of sequential optimization problem. In this section we will discuss methods of solving MDPs. This background is relevant to the later chapters for two reasons. First, the empirical DeepRL work in Chapter 4 uses Q-learning which is an off-policy model-free reinforcement learning algorithm. Second, the multiagent learning algorithms in Chapter 3 will in various ways draw analogies to several model-based and model-free learning algorithms.
+
+\subsection{Policy Evaluation}
+
+Policy evaluation is a model-based method by which a player can calculate the value function $V_{\pi}(s)$ for a given policy $\pi$. It is a solution to the first question one might want to answer en route to finding an optimal policy: how can an agent compute the performance of a given policy? The algorithm relies on the fact that $V_{\pi}(s)$ satisfies the {\em Bellman equation}:
+
+\begin{equation}
+    V_{\pi}(s) = \sum_a \pi(a | s) \left[ r(s,a) + \gamma \sum_{s'} P_{ss'}(a) V_{\pi}(s') \right]
+    \label{bellman}
+\end{equation}
+
+In fact it is the {\em unique} solution, meaning this equation completely characterizes $V_{\pi}(s)$. One can calculate $V_{\pi}(s)$ via the recursive update
+
+\begin{equation}
+    v_{k+1}(s) = \sum_a \pi(a | s) \left[ r(s,a) + \gamma \sum_{s'} P_{ss'}(a)v_k(s') \right]
+    \label{policyeval}
+\end{equation}
+
+It can be shown that $\lim_{k \rightarrow \infty} v_k(s) = V_{\pi}(s)$. 
+
+\subsection{Policy Improvement}
+
+The next natural question one can ask is how to improve on a given policy $\pi$ once it has been evaluated. This can be accomplished through policy improvement, which is a model-based learning method. 
+
+Suppose we have arrived at the state-value function $V_{\pi}(s)$, perhaps through policy evaluation. Given access to the model, we can immediately compute the action-value function $Q_{\pi}(s,a)$ via
+
+\begin{equation}
+    Q_{\pi}(s,a) = r(s,a) + \gamma \sum_{s'} P_{ss'}(a) V_{\pi}(s')
+    \label{qfromv}
+\end{equation}
+
+From here we define a new policy $\pi'$ according to the decision rule
+\begin{equation}
+    \pi'(a | s) = {\text argmax}_a Q_{\pi} (s, a)
+    \label{policyimprovement}
+\end{equation}
+
+The {\em Policy Improvement Theorem} guarantees that
+
+\begin{equation}
+    V_{\pi'}(s) \geq V_{\pi}(s) \text{\hspace{.5in} for all states $s$} 
+    \label{policyimprovementtheorem}
+\end{equation}
+
+
+\subsection{Policy Iteration}
+
+We now have all of the requisite ingredients to perform model-based reinforcement learning. We can:
+\begin{enumerate}
+    \item Evaluate $\pi$ (policy evaluation)
+    \item Improve $\pi$ once it has been evaluated (policy improvement)
+\end{enumerate}
+
+Policy iteration simply alternates between these two steps. That is, in each epoch, the algorithm begins with a policy $\pi$, evaluates it using policy evaluation, and derives a new improved policy $\pi'$ from policy improvement. In the next epoch, $\pi'$ takes the place of $\pi$. This process is guaranteed to converge to an optimal policy $\pi^*$. 
+
+\subsection{Q-learning}
+
+Q-learning \cite{watkins1992q}  is the quintessential model-free reinforcement learning algorithm. It leads to an optimal policy while making minimal assumptions about an agent's knowledge of the environment. In particular Q-learning only assumes the agent observes trajectories ie state-action-reward sequences from the environment. Q-learning is an {\em off-policy} learning algorithm, meaning that the agent follows one policy while estimating the value of a different policy. The agent can essentially follow an arbitrary policy (so long as it is sufficiently exploratory) and gain knowledge about the action-values of an optimal policy. This makes Q-learning quite flexible. For example, the agent may explore the environment according to any number of schemes. Also, the agent can incorporate experience from various sources during Q-learning, for instance, it may utilize experience from expert players \cite{schaal1997learning, guo2018faster}. 
+
+The goal of Q-learning is to learn the $Q$-values $Q_*(s,a)$ of an optimal policy $\pi^*$. Note that, while $\pi^*$ may not be unique, all optimal policies have the same $Q$-values. This follows from the fact that $Q^*$ is the unique fixed point of a contraction operator. Pseudocode for Q-learning is shown in Algorithm \ref{alg:Q}.
+
+\begin{algorithm}
+\caption{Tabular $Q$-learning algorithm.}
+\begin{algorithmic}
+\STATE Initialize $Q(s,a)$ arbitrarily for non-terminal states and $Q(s,a)=0$ for terminal states.
+\STATE $n=0$
+\WHILE{1}
+\STATE Initialize starting state $s$
+\WHILE{state is not terminal}
+\STATE Take action $a$ chosen according to exploratory behavior policy $\pi$
+\STATE Receive reward $r$ and next state $s'$
+\STATE $Q_{n+1}(s,a) \leftarrow Q(s,a) + \alpha_n \left[ r + \gamma {\text max}_a Q_n(s', a) - Q_n(s,a)   \right]$
+\STATE $n \leftarrow n +1$
+\ENDWHILE
+\ENDWHILE
+\end{algorithmic}
+\label{alg:Q}
+\end{algorithm}
+
+The quantity $\alpha_n$ is positive and sometimes called the learning rate. For $Q$-learning to converge, the sequence $\{\alpha_n\}$ must satisfy
+
+\begin{align*}
+&\sum_n \alpha_n = \infty \text{ \hspace{.3in} and, }\\
+&\sum_n \alpha_n^2 < \infty
+\end{align*}
+
+A standard choice is $\alpha = \frac{1}{n}$, which makes the update equation into a running average.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

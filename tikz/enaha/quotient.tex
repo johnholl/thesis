@@ -1,0 +1,27 @@
+\begin{tikzpicture}[xscale=1.4,yscale=1.4]
+\coordinate (a) at (-1.5,0);
+\coordinate (b) at (0,1);
+\coordinate (c) at (0,-1);
+\coordinate (d) at (1.5,0);
+\draw (a) -- (b) node [midway, above left] {$e_2$};
+\draw (b) -- (d) node [midway, above right] {$e_1$};
+\draw (d) -- (c) node [midway, below right] {$e_4$};
+\draw (c) -- (a) node [midway, below left] {$e_3$};
+\draw (b) -- (c) node [midway, right=1mm] {$e_5$};
+\draw[fill=white] (a) circle (2pt);
+\draw[fill=black] (b) circle (2pt);
+\draw[fill=black] (c) circle (2pt);
+\draw[fill=white] (d) circle (2pt);
+
+\coordinate (e) at (3.5,-1);
+\coordinate (f) at (3.5,1);
+\coordinate (g) at (5.5,0);
+\draw (e) -- node[left] {$e_5$} (f);
+\draw (f) -- node[below left] {$e_2$} (g);
+\draw (e) -- node[above left] {$e_3$} (g);
+\draw[out=-20,in=-80, distance=0.6cm] (e) to  node [below right] {$e_4$} (g);
+\draw[out=20,in=80, distance=0.6cm ] (f) to node [above right] {$e_1$} (g);
+\draw[fill=white] (g) circle (2pt);
+\draw[fill=black] (e) circle (2pt);
+\draw[fill=black] (f) circle (2pt);
+\end{tikzpicture}

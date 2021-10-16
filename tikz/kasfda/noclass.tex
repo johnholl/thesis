@@ -1,0 +1,15 @@
+	\begin{tikzpicture}
+	\def\c{1.4}
+	\coordinate (a3) at (0,0);
+	\coordinate (a1) at (-2,0);
+	\coordinate (a2) at (-1,1);
+	\coordinate (a4) at (1,1);
+	\coordinate (a5) at (2,0);
+	\draw (a1) -- (a2) -- (a3) -- (a4) -- (a5);
+	\draw (a2) -- (a4);
+	\draw[fill=white] (a1) circle (3pt);
+	\draw[fill=black] (a2) circle (3pt);
+	\draw[fill=white] (a3) circle (3pt);
+	\draw[fill=black] (a4) circle (3pt);
+	\draw[fill=white] (a5) circle (3pt);
+	\end{tikzpicture}

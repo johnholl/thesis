@@ -1,0 +1,48 @@
+\begin{tikzpicture}[xscale=5,yscale=2.3]
+\tikzset{->-/.style={decoration={
+			markings,
+			mark=at position .5 with {\arrow{>}}},postaction={decorate}}}
+\node (a) at (0:1) {$-1$};
+\node (b) at (360/14:1) {$-\frac{11}{13}$};
+\node (c) at (2*360/14:1) {$-\frac{77}{117}$};
+\node (d) at (3*360/14:1) {$-\frac{77}{195}$};
+\node (e) at (4*360/14:1) {$\frac{77}{195}$};
+\node (f) at (5*360/14:1) {$\frac{77}{117}$};
+\node (g) at (6*360/14:1) {$\frac{11}{13}$};
+\node (h) at (7*360/14:1) {$1$};
+\node (i) at (8*360/14:1) {$\frac{11}{13}$};
+\node (j) at (9*360/14:1) {$\frac{77}{117}$};
+\node (k) at (10*360/14:1) {$\frac{77}{195}$};
+\node (l) at (11*360/14:1) {$-\frac{77}{195}$};
+\node (m) at (12*360/14:1) {$-\frac{77}{117}$};
+\node (n) at (13*360/14:1) {$-\frac{11}{13}$};
+\node (o) at (0:0) {$0$};
+\draw[->-] (b) -- (a);
+\draw[->-] (c) -- (b);
+\draw[->-] (d) -- (c);
+\draw[->-] (e) -- (d);
+\draw[->-] (f) -- (e);
+\draw[->-] (g) -- (f);
+\draw[->-] (h) -- (g);
+\draw[->-] (h) -- (i);
+\draw[->-] (i) -- (j);
+\draw[->-] (j) -- (k);
+\draw[->-] (k) -- (l);
+\draw[->-] (l) -- (m);
+\draw[->-] (m) -- (n);
+\draw[->-] (n) -- (a);
+\draw[->-] (o) -- (a);
+\draw[->-] (o) -- (b);
+\draw[->-] (o) -- (c);
+\draw[->-] (o) -- (d);
+\draw[->-] (o) -- (l);
+\draw[->-] (o) -- (m);
+\draw[->-] (o) -- (n);
+\draw[->-] (e) -- (o);
+\draw[->-] (f) -- (o);
+\draw[->-] (g) -- (o);
+\draw[->-] (h) -- (o);
+\draw[->-] (i) -- (o);
+\draw[->-] (j) -- (o);
+\draw[->-] (k) -- (o);
+\end{tikzpicture}

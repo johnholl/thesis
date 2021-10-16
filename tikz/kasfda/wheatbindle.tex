@@ -1,0 +1,51 @@
+\begin{tikzpicture}[scale=1.5]
+\tikzset{->-/.style={decoration={
+			markings,
+			mark=at position .5 with {\arrow{>}}},postaction={decorate}}}
+	\def\c{0.75}
+	\coordinate (a) at ({-2*\c},0);
+	\coordinate (b) at ({-3*\c},0);
+	\coordinate (h) at (0,0);
+	%\node at (h) [above = 1.2mm] {$v$};
+	\draw[fill=black] (a) circle (2pt);
+	\draw[fill=black] (b) circle (2pt);
+	\draw[fill=black] (h) circle (2pt);
+	\draw[->-] (b) -- (a);
+	\draw[->-] (a) .. controls ({-1.33*\c},0.2) and ({-0.66*\c},0.2) .. (h);
+	\draw[->-] (a) .. controls ({-1.33*\c},-0.2) and ({-0.66*\c},-0.2) .. (h);
+	\draw[->-] (b) .. controls ({-2.7*\c},1) and  ({-0.4*\c},1) .. (h);
+	\draw[->-] (b) .. controls ({-2.7*\c},-1) and ({-0.4*\c},-1) .. (h);
+	\node at ({-2.5*\c},0) [below = 1.1mm] {$1$};
+	\node at (-0.1,-0.5) {$a$};
+	\node at (-0.08,0.47) {$b$};
+	\node at (-1.08,0.32) {$b$};
+	\node at (-1.1,-0.35) {$a$};
+	\draw (0.21,0) circle (0.21);
+	
+	%\path[left color=black,middle color = white,right color=white] +(0,-0.1pt) rectangle +(1cm,0.1pt);
+	
+	
+	
+	\def\a{-4.4}
+	\def\b{0.55}
+	\coordinate (A) at ({\a-\b*2.2},0);
+	\coordinate (B) at (\a,{\b*1.45});
+	\coordinate (C) at (\a,{-1.45*\b});
+	\coordinate (D) at ({\a+\b*2.2},0);
+	\draw (A) -- (B) -- (D) -- (C) -- (A);
+	\draw (B) -- (C);
+	\node at (A) [below = 1.2mm] {$a$};
+	\node at (D) [below = 1.2mm] {$b$};
+	\draw[fill=white] (A) circle (2pt);
+	\draw[fill=black] (B) circle (2pt);
+	\draw[fill=black] (C) circle (2pt);
+	\draw[fill=white] (D) circle (2pt);
+	
+	\def\d{0.9}
+	\def\e{-2.5}
+	\draw ({-0.6*\d-\e},{-\d}) -- ({-0.6*\d-\e},{\d});
+	\draw ({0.6*\d-\e},{-\d}) -- ({0.6*\d-\e},{\d});
+	\draw ({-\d-\e},{-0.6*\d}) -- ({\d-\e},{-0.6*\d});
+	\draw ({-\d-\e},{0.6*\d}) -- ({\d-\e},{0.6*\d});
+	\draw ({-\d-\e},{-\d}) -- ({\d-\e},{\d});
+\end{tikzpicture}

@@ -1,0 +1,190 @@
+\section{Potential Games}
+
+The formal study of potential games began with \cite{monderer1996potential}, although the use of potential theory for studying certain types of games was initiated decades prior by Rosenthal \cite{rosenthal1973class}. Potential games can be viewed as a natural extension of team games. In a team game, all players possess the same utility function. In potential games, players may have different utility functions, but these utility functions are all linked together by a shared {\em potential function}. Potential games possess a wide number of applications in economics and engineering \cite{buzzi2011potential, cheng2014finite, li2013designing, marden2007connections, saad2012game, scutari2006potential, soto2009distributed, sandholm2001potential}. 
+
+Potential games are a class of normal-form games that admit pure Nash equilibria, with several learning methods that are guaranteed to converge to Nash equilibria. Their equilibrium sets are also interesting because they admit natural refinements of Nash equilibria.
+
+\begin{mydef}
+A finite potential game is an finite $n$-player game $G = (\AA^i, u^i)$ together with a function (called a {\em potential function}) 
+$$
+\phi: \AA \rightarrow \R
+$$
+ such that for any joint strategy $x = (x^1, \ldots, x^n)$ and player strategy $y^i \in \AA^i$,
+
+%\begin{equation} \label{pot}
+$$
+\phi(\asub{x}{y^i}) - \phi(x) = u^i(\asub{x}{y^i}) - u^i(x)
+$$
+%\end{equation}
+\end{mydef}
+
+
+This equation says that when a player unilaterally changes the joint strategy (that is, they change their strategy and all other players maintain the same strategy), the change in that player's utility is equal to the change in the potential function. This means that potential functions are not unique: if $\phi$ is a potential for the game $G$ then clearly so is $\phi + c$ where $c$ is any constant. It's also not hard to see that this completely characterizes the set of potential functions that exist for a potential game $G$. 
+
+We can view the existence of a potential function as a graph-theoretic condition on the graph of joint strategies as follows. Let $G$ be a finite game, and let $\Gamma$ be a weighted directed graph whose vertices correspond to the set of joint strategies in $G$. This graph will have edges between strategies $a \rightarrow b$ if and only if $a$ and $b$ differ by exactly one player strategy. That is, $b = \asub{a}{b^i}$ for some player $i$ (this also means that there is an edge $b \rightarrow a$). The weight on edge $a \rightarrow b$ is $u^i(b) - u^i(a)$, and the weight on edge $b \rightarrow a$ is $u^i(a) - u^i(b)$. The {\em distance} of a directed path $\PP$ in $\Gamma$ is the sum of weights along the directed edges that make up $\PP$. 
+
+\begin{prop}
+A game $G$ is a potential game if and only if for all pure joint strategies $a_1$ and $a_2$, all paths between $a_1$ and $a_2$ have the same distance.
+\end{prop}
+
+In fact, any pair of paths $\PP_1$ and $\PP_2$ between $a_1$ and $a_2$ can be decomposed as a sum of simple commutative squares in $\Gamma$. So, one needs only check local commutativity conditions to guarantee the existence of a potential function:
+
+\begin{cor}\cite{monderer1996potential}
+Let $G$ be a normal-form game. Then $G$ is a potential game if and only if for any pure joint stragegy $a$, players $i$ and $j$, and pure player strategies $b^i \in \AA^i$ and $b^j \in \AA^j$
+
+$$
+u^i(\asub{a}{b^ib^j}) - u^i(\asub{a}{b^j}) + u^j(\asub{a}{b^j}) - u^j(a) = u^j(\asub{a}{b^ib^j}) - u^j(\asub{a}{b^i}) + u^i(\asub{a}{b^i}) - u^i(a)
+$$
+\label{cor:commsquare}
+\end{cor}
+
+This corollary will play an important role in much of the work generalizing potential games to stochastic games.
+
+
+\subsection{Examples of potential games}
+
+The following is a sampling of some two and three player potential games with discussion on their equilibrium sets.
+
+Let's start with the simplest possible potential game. The "trivial" game
+
+\begin{equation}
+
+   \begin{blockarray}{ccc}
+ & a & b \\
+\begin{block}{c(cc)}
+  a & 0,0 & 0,0  \\
+  b & 0,0  & 0,0  \\
+\end{block}
+\end{blockarray} 
+
+\label{eq:trivgame}
+\end{equation}
+
+is a potential game with trivial potential function $\phi \equiv 0$. Any strategies in this game will constitute a Nash equilibrium, which includes both pure and mixed strategies.
+
+A game may have nonzero utilities but still admit a trivial potential function. Consider the following game:
+
+\begin{equation}
+
+   \begin{blockarray}{ccc}
+ & a & b \\
+\begin{block}{c(cc)}
+  a & 0,0 & 1,0  \\
+  b & 0,1  & 1,1  \\
+\end{block}
+\end{blockarray} 
+
+\label{eq:helpergame}
+\end{equation}
+
+In this game, utilities are not trivial, however, players are unable to influence their own utilities. That is, the action of player 1 determines player 2's utility and vice versa. This game still has a trivial potential function $\phi \equiv 0$, and all strategies are in Nash equilibrium.
+
+One more complete example of a potential games is:
+
+\begin{equation}
+
+   \begin{blockarray}{ccc}
+ & a & b \\
+\begin{block}{c(cc)}
+  a & 1,1 & 0,1  \\
+  b & 1,0  & 1,1  \\
+\end{block}
+\end{blockarray} 
+
+\label{eq:PoA}
+\end{equation}
+
+This game is interesting from the perspective of its pure Nash equilibria. It is a potential game with potential function:
+\begin{align*}
+\phi(a,a) = 0 \\
+\phi(a,b) = 0 \\
+\phi(b,a) = 0 \\
+\phi(b,b) = 1
+\end{align*}
+
+The potential maximizing pure joint strategy $\left[b,b\right]$ is a Nash equilibrium, and so is the pure strategy $\left[a,a\right]$. The other two pure strategies are not Nash equilibria. It is also interesting to note that the two equilibria have identitical utilities but different potential function values. 
+
+
+Any {\em team game} $G$ is a potential game. A team game is a game where there is a single utility function $u = u^i$ that is shared for all players. In this case, $G$ is a potential game with potential function $\phi = u$.
+
+Here is one more important class of potential games. Consider a system of $n$ interacting players, by which we mean a set of $n$ players, where each player $i$ has a strategy set $\AA^i$. This is not yet a game because we have not specified the utility functions. Now suppose we are given a {\em welfare function}
+
+\begin{equation}
+    W: \AA \rightarrow \mathbb{R}
+\end{equation}
+
+which is meant to be some global measure of the "goodness" of a joint strategy. From this welfare function we may derive the {\em Wonderful Life Utility} (WLU) \cite{wolpert2002optimal}. Let $a_0$ be some baseline fixed joint strategy and define
+
+\begin{equation}
+    u^i(a) = W(a) - W(\asub{a}{a_0^i})
+\end{equation}
+
+A game with these utilities will be a potential game, and the welfare function $W$ is a potential function for this game.
+
+
+
+
+\subsection{Equilibrium sets in potential games}
+
+In the examples above we saw several potential games with different equilibrium set characteristics. An important unifying fact about potential game equilibria is
+
+
+\begin{thm}\cite{monderer1996potential}
+Let $\Gamma$ be a potential game with potential function $\phi$. Any pure joint strategy $x$ that maximizes $\phi$ is a Nash equilibrium.
+\label{thm:potmax}
+\end{thm}
+
+There of course is always such a joint strategy, and therefore potential games are guaranteed to admit at least one pure Nash equilibrium. As we saw in one of the preceding examples, this theorem cannot be extended to an if and only if statement, that is, there can be pure Nash equilibria that do not maximize the potential function.
+
+
+\subsection{Generalizations of potential games}
+
+While the present work only makes use of the strict definition of potential games, it is worth describing drawbacks of this definition as well as some extensions of potential games that overcome such drawbacks. These more general versions of potential games may serve as the bedrock of future research into ``nice'' classes of stochastic games.
+
+First, consider strategic situations where player utilities are aligned but operate at different scales. A contrived but concrete example would be a team game where players are using different units to measure their utility. This can be represented by a modified version of the standard 2-player coordination game:
+
+\begin{equation}
+
+   \begin{blockarray}{ccc}
+ & a & b \\
+\begin{block}{c(cc)}
+  a & 1,2 & 0,0  \\
+  b & 0,0  & 1,2  \\
+\end{block}
+\end{blockarray} 
+
+\label{eq:unitcoord}
+\end{equation}
+
+It is to both players' advantages to coordinate, and this closely resembles a team game, however it does not admit a potential function. This game is however a {\em weighted potential game}:
+
+\begin{mydef}
+A finite weighted potential game is an finite $n$-player game $\Gamma = (\AA^i, u^i)$ together with a function (called a {\em potential function}) 
+$$
+\phi: \AA \rightarrow \R
+$$
+
+along with player-specific weights $w_1, \ldots, w_n$ such that for any joint strategy $x = (x^1, \ldots, x^n)$ and player strategy $y^i \in \AA^i$,
+
+%\begin{equation} \label{pot}
+$$
+\phi(\asub{x}{y^i}) - \phi(x) = w_i \left[ u^i(\asub{x}{y^i}) - u^i(x) \right]
+$$
+%\end{equation}
+\end{mydef}
+
+In our example, we can make the game a weighted potential game with $w_1 = 2$ and $w_2 = 1$.
+
+
+Weighted potential games are able to handle player utilities that are at different {\em multiplicative} scales. An even more general game is an {\em ordinal potential game}, where utility difference and potential function difference merely have the same sign:
+
+\begin{mydef}
+A finite ordinal potential game is an finite $n$-player game $\Gamma = (\AA^i, u^i)$ together with a function (called a {\em potential function}) 
+$$
+\phi: \AA \rightarrow \R
+$$
+
+ such that for any joint strategy $x = (x^1, \ldots, x^n)$ and player strategy $y^i \in \AA^i$, $\phi(\asub{x}{y^i}) - \phi(x) > 0$ if and only if $ u^i(\asub{x}{y^i}) - u^i(x) > 0$
+\end{mydef}
+
+A {\em generalized ordinal potential game} only has one side of the implication, that is, $ u^i(\asub{x}{y^i}) - u^i(x) > 0 \implies \phi(\asub{x}{y^i}) - \phi(x) > 0$. 

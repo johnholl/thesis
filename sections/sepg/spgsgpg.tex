@@ -1,0 +1,396 @@
+\section{Stochastic Potential Games and Stochastic Global Potential Games}
+
+We will now do a more in depth comparison between SPGs and SGPGs. We will see that, in a sense, SGPG's are {\em almost} a special case of SPGs. We begin by showing that there are SPGs that are not SGPGs. 
+
+\begin{eg}
+Consider a 2-player stochastic game with 3 states: $s_1$, $s_2$, and $s_3$ which initially starts in $s_1$. Both players have two actions $a$ and $b$ in each state. The stage games in $s_1$ and $s_3$ are trivial, that is, all actions yield zero utility for both players. The stage game in $s_2$ is given by the following bimatrix:
+
+%$$
+%\begin{pmatrix} 
+%4,2 & 4,2 \\
+%2,1 & 2,3 
+%\end{pmatrix}
+%$$
+
+
+\[
+\begin{blockarray}{ccc}
+ & a & b \\
+\begin{block}{c(cc)}
+  a & 4,2 & 2,2 \\
+  b & 2,1 & 2,3 \\
+\end{block}
+\end{blockarray}
+ \]
+
+Finally, the transition probabilities are
+
+$$
+P_{12} = 
+\begin{pmatrix} 
+0 & 0.5 \\
+0.5 & 1 
+\end{pmatrix}
+$$
+
+and
+
+$$
+P_{13} =
+\begin{pmatrix} 
+1 & 0.5 \\
+0.5 & 0 
+\end{pmatrix}
+$$
+
+It is straightforward to see that these transition probabilities are modular. $G_{s_1}$ and $G_{s_3}$ are trivially potential games with potential function $\phi \equiv 0$. $G_{s_2}$ is a potential game with potential function:
+
+\[
+\begin{blockarray}{ccc}
+ & a & b \\
+\begin{block}{c(cc)}
+  a & 0 & 0 \\
+  b & -2 & 0 \\
+\end{block}
+\end{blockarray}
+ \]
+
+%\begin{align*}
+%&\phi(a,a) = 0 \\
+%&\phi(a,b) = 0 \\
+%&\phi(b,a) = -2 \\
+%&\phi(b,b) = 2 \\
+%\end{align*}
+
+Since all stage games are potential games and the dynamics are modular, $\Gamma$ is an SPG. Now, let
+\begin{align*}
+&\pi^1 = \pi^2 = [a,a,a] \\
+&\tilde{\pi}^1 = [b,a,a] \\
+&\tilde{\pi}^2 = [a,b,a]
+\end{align*}
+
+Then
+
+\begin{align*}
+&V^1_{s_1}(\tilde{\pi}^1, \pi^2) - V^1_{s_1}(\pi^1, \pi^2) = 2 \\
+&V^2_{s_1}(\tilde{\pi}^1, \tilde{\pi}^2) - V^2_{s_1}(\tilde{\pi}^1, \pi^2) = 1 \\
+&V^2_{s_1}(\pi^1, \tilde{\pi}^2) - V^2_{s_1}(\pi^1, \pi^2) = 1 \\
+&V^1_{s_1}(\tilde{\pi}^1, \tilde{\pi}^2) - V^1_{s_1}(\pi^1, \tilde{\pi}^2) = 1 \\
+\end{align*}
+
+Since these returns do not commute there cannot exist a global potential function. Notice that this example makes use of changing strategies in different states for different players. This displays some of the flexibility that SPGs have over SGPGs.
+
+\end{eg}
+
+
+Now we give an example of a group of SGPGs that are not SPGs.
+
+\begin{eg}
+Let $\Gamma$ be a stochastic team game (ie all players receive the same utility in every state) with non-modular dynamics. By definition it cannot be an SPG. However, it admits a global potential function
+
+$$
+\Phi(s, \pi) = V^i_{\pi}(s)
+$$
+
+Note that the right hand side is independent of the choice of player $i$ since all players receive the same utilities and hence have the same $V$ functions.
+\end{eg}
+
+
+Now that we've established that SPGs and SGPGs are distinct classes of stochastic games, we'll examine their relationship in more detail. For the remainder of the section we will only work with {\em layered} stochastic games. Furthermore, we introduce an additional property of stochastic games that will be useful:
+
+\begin{mydef}
+An $n$-player stochastic game has the {\em termination property} if, for every state $s \in \SS$ there exists a joint action $a^{term}_s \in \AA^1 \times \cdots \times \AA^n$ which provides zero utility for all players.
+\end{mydef}
+
+We now state the main theorem of this section.
+
+\begin{thm}
+A layered $n$-player stochastic global potential game $\Gamma$ with the termination property is either a stochastic potential game or a stochastic team game.
+\end{thm}
+
+\begin{proof}
+Let $\Phi$ be the global potential function for $\Gamma$. Fix a state $s \in \SS_k$ and joint action $a$ in state $s$. Let $\pi$ be the joint behavior with $\pi^i = a$ and $\pi_s' = a^{term}_{s'}$ for all other states. Let $b^i \in \AA^i$ be an alternative action for player $i$ in state $s$. The return for player $i$ starting in state $s$ is:
+
+$$
+V^i_{\pi}(s) = u^i_s(\pi_s) + \sum_{s' \in \SS_{k+1}} P_{ss'}(\pi_s) V^i_{\pi}(s')
+$$
+
+Since $\pi_{s'} = a^{term}_{s'}$ for all $s' \neq s$, all of the $V^i_{\pi}(s')$ are zero. Hence
+
+$$
+V^i_{\pi}(s) = u^i_s(\pi_s) = u^i_s(a)
+$$
+
+Now, by assumption, changes in value at a state are aligned with changes in the potential function so that
+
+$$
+\Phi(s,\asub{\pi}{b^i}) - \Phi(s,\pi) = V^i_{\asub{\pi}{b^i}}(s) - V^i_{\pi}(s) = u^i_s(\asub{a}{b^i}) - u^i_s(a)
+$$
+
+So the function
+$$
+\phi_s(a) = \Phi(s,\pi)
+$$
+
+is a potential function for the stage game $G_s$. Hence $\Gamma$ satisfies the first property of SPGs.
+
+Now we must examine the transition probabilities of $\Gamma$. Consider a state $s$, a joint pure behavior $\pi$ with $\pi_s = a$, players $i$ and $j$, and $b^i \in \AA^i$ and $b^j \in \AA^j$ alternative actions for players $i$ and $j$ in state $s$. Since the stage game in state $s$ is a potential game, we have that
+
+$$
+\Phi(s,\asub{\pi}{b^ib^j}) - \Phi(s,\asub{\pi}{b^i}) + \Phi(s,\asub{\pi}{b^i}) - \Phi(s,\pi) \\
+= \\
+\Phi(s,\asub{\pi}{b^ib^j}) - \Phi(s,\asub{\pi}{b^i}) +\Phi(s,\asub{\pi}{b^i}) - \Phi(s,\pi)
+$$
+
+implies that
+
+\begin{align*}
+\sum_{s' \in \SS_{k+1}} \left[P_{ss'}(\asub{a}{b^ib^j}) - P_{ss'}(\asub{a}{b^i})\right] V^j_{\pi}(s') + \sum_{s' \in \SS_{k+1}} \left[P_{ss'}(\asub{a}{b^i}) - P_{ss'}(a)\right] V^i_{\pi}(s') = \\
+\sum_{s' \in \SS_{k+1}} \left[P_{ss'}(\asub{a}{b^ib^j}) - P_{ss'}(\asub{a}{b^j})\right] V^i_{\pi}(s') + \sum_{s' \in \SS_{k+1}} \left[P_{ss'}(\asub{a}{b^j}) - P_{ss'}(a)\right] V^j_{\pi}(s')
+\end{align*}
+
+We can rearrange this to obtain a familiar relationship:
+
+\begin{align*}
+\sum_{s' \in \SS_{k+1}} \left[P_{ss'}(\asub{a}{b^ib^j})- P_{ss'}(\asub{a}{b^i}) - P_{ss'}(\asub{a}{b^j}) +  P_{ss'}(a)\right] V^i_{\pi}(s') \\
+= \sum_{s' \in \SS_{k+1}} \left[P_{ss'}(\asub{a}{b^ib^j}) - P_{ss'}(\asub{a}{b^i}) - P_{ss'}(\asub{a}{b^j}) +  P_{ss'}(a)\right] V^j_{\pi}(s')
+\end{align*}
+
+
+Notice that this equation resembles [equation for continuation game] except the continuation vectors $z^i$ are replaced by expected rewards $V^i_{\pi}(s)$. With arbitrary $z^i$, we could construct them such that the only way to satisfy the equations was to have modular dynamics. In contrast, the $V^i_{\pi}(s)$ are given as part of the stochastic game, and span a comparatively low-dimensional subspace. This is most readily seen in the case of team games, where $V^i_{\pi}(s) = V^j{\pi}(s)$ for all $i$ and $j$, so that they span a one-dimensional space. 
+
+*We can add a definition / assumption about this. It would amount to something a bit stronger than the termination property, which is something like: 'There are joint behaviors that give one player reward one and all others reward zero.'*
+
+\end{proof}
+
+\subsection{Further investigation of SGPGs}
+
+Notice that in the preceding analysis, we made use of consistency equations [reference eq] for SGPGs in which the changes in player $i$ and player $j$'s behaviors occurr in the same state $s$. However, if we vary the states that the behavior changes occur in, we can derive a much larger set of consistency equations that restrict the form of SGPGs even further. 
+
+Suppose alternative actions $b^i$ and $b^j$ occur in adjacent layers, that is, in states $s_1 \in \SS_k$ and $s_2 \in \SS_{k+1}$ respectively. Fix a baseline joint pure behavior $\pi$, and for notational simplicity let $a_1 = \pi_{s_1}$ and $a_2 = \pi_{s_2}$. As usual, we start from the consistency equation
+
+$$
+\Phi(s_1,\asub{\pi}{b^ib^j}) - \Phi(s_1,\asub{\pi}{b^i}) + \Phi(s_1,\asub{\pi}{b^i}) -
+\Phi(s_1,\pi)
+=
+\Phi(s_1,\asub{\pi}{b^ib^j}) - \Phi(s_1,\asub{\pi}{b^j}) + \Phi(s_1,\asub{\pi}{b^j}) -
+\Phi(s_1,\pi)
+$$
+
+Replacing each difference with a difference in values, and then simplifying yields:
+
+\begin{align*}
+\Phi(s_1,\asub{\pi}{b^ib^j}) - \Phi(s_1,\asub{\pi}{b^i}) = & u^j_{s_1}(\asub{a_1}{b^i}) + \sum_{s' \in \SS_{k+1}} P_{s_1s'}(\asub{a_1}{b^i})V^j_{\asub{\pi}{b^ib^j}}(s') \\
+& - u^j_{s_1}(\asub{a_1}{b^i}) - \sum_{s' \in \SS_{k+1}} P_{s_1s'}(\asub{a_1}{b^i})V^j_{\asub{\pi}{b^ib^j}}(s')
+\end{align*}
+
+Notice that changing actions in earlier layer states has no effect on the value of later states so 
+
+$$
+V^j_{\asub{\pi}{b^ib^j}}(s') = V^j_{\asub{\pi}{b^j}}(s')
+$$
+
+Furthermore, when $s' \neq s_2$, 
+$$
+V^j_{\asub{\pi}{b^j}}(s') = V^j_{\pi}(s')
+$$
+
+So most terms above cancel, leaving
+
+$$
+\Phi(s_1,\asub{\pi}{b^ib^j}) - \Phi(s_1,\asub{\pi}{b^i}) = P_{s_1s_2}(\asub{a_1}{b^i}) \left[Q^j_{\pi}(s_2, \asub{a_2}{b^j}) - Q^j_{\pi}(s_2, a_2)\right]
+$$
+
+Following a similar process for the other differences in the consistency equation we get
+
+\begin{align*}
+&\Phi(s_1,\asub{\pi}{b^i}) - \Phi(s_1,\pi) = u^i_{s_1}(\asub{a_1}{b^i}) - u^i_{s_1}(a) + \left[P_{s_1s_2}(\asub{a_1}{b^i}) - P_{s_1s_2}(a)\right] V^i_{\pi}(s_2) \\
+&\\
+&\Phi(s_1,\asub{\pi}{b^ib^j}) - \Phi(s_1,\asub{\pi}{b^j}) = u^i_{s_1}(\asub{a_1}{b^i}) - u^i_{s_1}(a) + \left[P_{s_1s_2}(\asub{a_1}{b^i}) - P_{s_1s_2}(a)\right] Q^i_{\pi}(s_2, \asub{a_2}{b^j})\\
+&\\
+&\Phi(s_1,\asub{\pi}{b^j}) - \Phi(s_1,\pi) = P_{s_1s_2}(a_1) \left[Q^j_{\pi}(s_2, \asub{a_2}{b^j}) - V^j_{\pi}(s_2)\right]
+\end{align*}
+
+
+Substituting these into the original consistency equation and rearranging terms results in
+
+\begin{align*}
+\left(P_{s_1s_2}(a) - P_{s_1s_2}(\asub{a}{b^i}) \right)\left(Q^i_{\pi}(s_2, \asub{a_2}{b^j}) - Q^i_{\pi}(s_2, a_2)\right) \\
+= \left(P_{s_1s_2}(a) - P_{s_1s_2}(\asub{a}{b^i}) \right)\left(Q^j_{\pi}(s_2, \asub{a_2}{b^j}) - Q^j_{\pi}(s_2, a_2)\right)
+\end{align*}
+
+
+** Add an analysis about what this means. Close to a team game **
+
+
+\subsection{Further investigation of SPGs}
+
+In this section we will examine modular dynamics and cast them in a form that lends itself to applications. Recall that a stochastic game $\Gamma$ has modular dynamics if for all state pairs $s$ and $s'$, joint action $a$, players $i$ and $j$ with alternative actions $b^i$ and $b^j$, the following equation holds:
+
+$$
+P_{ss'}(a) + P_{ss'}(\asub{a}{b^ib^j}) = P_{ss'}(\asub{a}{b^i}) + P_{ss'}(\asub{a}{b^j})
+$$
+
+
+\begin{lem}
+If $\Gamma$ has modular dynamics then for any player $i$, states $s$ and $s'$,  joint actions $a$ and $b$ with $a^i = b^i$, and player action $c^i$,
+
+$$
+P_{s'}(a) - P_{ss'}(\asub{a}{c^i}) = P_{s'}(b) - P_{ss'}(\asub{b}{c^i}) 
+$$
+\end{lem}
+
+\begin{proof}
+We know this is true when $a^{-i}$ and $b^{-i}$ differ by a single player's action since modular dynamics tells us that
+$$
+P_{ss'}(a) - P_{ss'}(\asub{a}{b^i}) = P_{ss'}(\asub{a}{b^j}) - P_{ss'}(\asub{a}{b^ib^j})
+$$
+
+For general $a$ and $b$ with $a^i = b^i$, we simply chain together single action changes, maintaining equality throughout the process, ie
+
+$$
+P_{ss'}(a) - P_{ss'}(\asub{a}{c^i}) = P_{ss'}(\asub{a}{b^1}) - P_{ss'}(\asub{a}{c^ib^1}) \\
+= P_{ss'}(\asub{a}{b^1b^2}) - P_{ss'}(\asub{a}{c^ib^1b^2}) \\
+= \cdots
+= P_{ss'}(\asub{a}{b^1\cdots b^{i-1}b^i b^n}) - P_{ss'}(\asub{a}{b^1\cdots b^{i-1}b^{i+1} b^nc^i}) = P_{ss'}(b) - P_{ss'}(\asub{b}{c^i})
+$$
+\end{proof}
+
+\begin{lem}
+If $\Gamma$ is a stochastic game with modular dynamics then for any pair of states $s$ and $s'$, there exists a {\em nonnegative} constant $c_{ss'}$ and {\em nonnegative} functions
+$$
+f^i_{ss'} : \AA^i \rightarrow \R
+$$
+
+for each player such that
+
+$$
+P_{ss'}(a) = c_{ss'} + \sum_{i=1}^n f^i_{ss'}(a^i)
+$$
+\end{lem}
+
+\begin{proof}
+
+Fix player $i$ and joint action $b$ such that
+
+$$
+b^i \in \text{argmin}_{b^i} P_{ss'}(b^i, b^{-i})
+$$
+
+Define the following functions
+
+$$
+f^i_{ss'}(a^i) := P_{ss'}(a^i, b^{-i}) - P_{ss'}(b^i, b^{-i}) \\
+g^i_{ss'}(a^{-i}) := P_{ss'}(b^i, a^{-i})
+$$
+
+Notice that by construction 
+$$
+P_{ss'}(a^i, a^{-i}) = f^i_{ss'}(a^i) + g^i_{ss'}(a^{-i})
+$$
+
+Since we can do this for all players, we can decompose $P_{ss'}(a)$ as
+
+$$
+P_{ss'}(a) = c_{ss'} + \sum_{i=1}^n f^i_{ss'}(a^i)
+$$
+
+Furthermore, since $b^i \in \text{argmin}_{b^i} P_{ss'}(b^i, b^{-i})$, all of the functions $f^i_{ss'}$ are nonnegative, and reach their minimum value of $0$ when $a^i = b^i$ (there are possibly other minima).
+
+Finally, we need to show that $c_{ss'}$ is nonnegative. But, based on our previous statement, we can certainly choose a joint action $c$ such that all of the functions $f^i_{ss'}$ are simultaneously zero. Then
+
+$$
+P_{ss'}(c) = c_{ss'}
+$$
+\end{proof}
+
+
+
+
+\begin{thm}
+Let $\Gamma$ be a stochastic game. Then $\Gamma$ has modular dynamics if and only if for every state $s$ there exist a "natural weight" $w^0$, state dependent player weights $w^i_s$ and action-conditional probability distributions over next states $\{p^i_{ss'}(a^i) \}$ such that
+$$
+P_{ss'}(a) = w_{ss'}^0 + \sum_{i} w^i_s p^i_{ss'}(a^i)
+$$
+\end{thm}
+
+\begin{proof}
+
+Suppose $\Gamma$ has modular dynamics. Then by the previous lemma we have the decomposition
+
+$$
+P_{ss'}(a) = c_{ss'} + \sum_{i=1}^n f^i_{ss'}(a^i)
+$$
+
+where $c_{ss'}$ and $f^i_{ss'}(a^i)$ are all nonnegative. Since $P_{ss'}(a)$ is a probability distribution over next states $s'$, 
+
+$$
+\sum_{s'} \sum_{i=1}^n f^i_{ss'}(a^i) = \sum_{s'} P_{ss'}(a) = 1
+$$
+
+Suppose we fix a player $j$ and alter their action to $b^j$ while keeping all other actions fixed. Then
+$$
+\sum_{s'} \sum_{i=1}^n f^i_{ss'}(a^i) = 1 = \sum_{s'} f^j_{ss'}(b^j) + \sum_{s'} \sum_{i=1, i \neq j}^n f^i_{ss'}(a^i)
+$$
+
+The terms not related to player $j$ cancel on both sides leaving
+
+$$
+\sum_{s'} f^j_{ss'}(a^j) = \sum_{s'} f^j_{ss'}(b^j)
+$$
+
+This equality holds for any pair of player $j$ actions and so it defines an action independent quantity $w_{s}^j := \sum_{s'} f^j_{ss'}(a^j)$. For a given action $b^j$ let
+$$
+p_{ss'}(b^j) = \dfrac{f^j_{ss'}(b^j)}{w_s^j}
+$$
+
+This defines a probability distribution over next states $s'$ that depends on the current state $s$ and player action $b^j$. Letting $w^0_{ss'} = c_{ss'}$ yields
+$$
+P_{ss'}(a) = w_{ss'}^0 + \sum_{i} w^i_{s} p^i_{ss'}(a^i)
+$$
+
+
+Now we need to show the reverse implication. Suppose $\Gamma$ has transition probabilities that can be decomposed as
+$$
+P_{ss'}(a) = w_{ss'}^0 + \sum_{i} w^i_{s} p^i_{ss'}(a^i)
+$$
+
+Let $b^i$ and $b^j$ be alternative actions for players $i$ and $j$. Then
+
+$$
+P_{ss'}(a) - P_{ss'}(\asub{a}{b^i}) = w^{i}_{s}p^i_{ss'}(a^i) - w^{i}_{s}p^i_{ss'}(b^i)
+$$
+
+and similarly
+$
+P_{ss'}(\asub{a}{b^j}) - P_{ss'}(\asub{a}{b^ib^j}) = w^{i}_{s}p^i_{ss'}(a^i) - w^{i}_{s}p^i_{ss'}(b^i)
+$
+
+So
+
+$$
+P_{ss'}(a) - P_{ss'}(\asub{a}{b^i}) = P_{ss'}(\asub{a}{b^j}) - P_{ss'}(\asub{a}{b^ib^j}) \\
+P_{ss'}(\asub{a}{b^j}) + P_{ss'}(\asub{a}{b^j}) = P_{ss'}(a) + P_{ss'}(\asub{a}{b^ib^j})
+$$
+
+Therefore $\Gamma$ has modular dynamics.
+\end{proof}
+
+
+
+
+[Name theorem] casts some light on possible applications of stochastic potential games. Intuitively, the above theorem means that for an SPG, in a given state players have differing levels of control over the state dynamics which is reflected in the weights $w^i_{ss'}$. In attempting the maximize their long-term return, players must decide between actions that provide high immediate reward and those that give them a larger share state dynamic control. This structure has natural analogies in markets, where players' control over the state dynamics are reflected in the amount of capital they have at their disposal to invest in the market. 
+
+*explore some examples here*
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,147 @@
+\section{Stochastic Global Potential Games}
+\label{sec:spg}
+
+In the previous section we found that not all SPGs are SGPGs. Is the opposite true? That is, does the existence of a global potential imply stage games are potential games and that transition probabilities are modular? We will see that the existence of a global potential function is in some ways more restrictive than the assumption of modular dynamics. In this section we will attempt to characterize the structure of SGPGs by looking at the constraints created by a global potential function. We will provide some examples of SGPGs and show that the constraints may be satisfied in a variety of ways. Finally we will discuss the set of Nash equilibria for SGPGs. 
+
+Now we give an example of a group of SGPGs that are not SPGs.
+
+\begin{eg}
+Let $G$ be any stochastic team game (ie all players receive the same utility in every state) with non-modular dynamics. By definition it cannot be an SPG. However, it admits a global potential function:
+
+$$
+\Phi(s, \pi) = V^i_{\pi}(s)
+$$
+
+Note that the right hand side is independent of the choice of player $i$ since all players receive the same utilities and hence have the same $V$ functions.
+\end{eg}
+
+\subsection{A gap between SGPGs and SPGs}
+
+Now that we've established that SPGs and SGPGs are distinct classes of stochastic games, we'll examine their relationship in more detail. For the remainder of the section we will only work with {\em layered} stochastic games. Furthermore, we introduce an additional property of stochastic games that will be useful:
+
+\begin{mydef}
+An $n$-player stochastic game has the {\em termination property} if, for every state $s \in \SS$ there exists a joint action $a^{term}_s \in \AA^1 \times \cdots \times \AA^n$ which provides zero utility for all players.
+\end{mydef}
+
+We now state the main theorem of this section.
+
+\begin{thm}
+A layered $n$-player stochastic global potential game $\Gamma$ with the termination property is either a stochastic potential game or a stochastic team game.
+\end{thm}
+
+\begin{proof}
+Let $\Phi$ be the global potential function for $\Gamma$. Fix a state $s \in \SS_k$ and joint action $a$ in state $s$. Let $\pi$ be the joint behavior with $\pi^i = a$ and $\pi_s' = a^{term}_{s'}$ for all other states. Let $b^i \in \AA^i$ be an alternative action for player $i$ in state $s$. The return for player $i$ starting in state $s$ is:
+
+$$
+V^i_{\pi}(s) = u^i_s(\pi_s) + \sum_{s' \in \SS_{k+1}} P_{ss'}(\pi_s) V^i_{\pi}(s')
+$$
+
+Since $\pi_{s'} = a^{term}_{s'}$ for all $s' \neq s$, all of the $V^i_{\pi}(s')$ are zero. Hence
+
+$$
+V^i_{\pi}(s) = u^i_s(\pi_s) = u^i_s(a)
+$$
+
+Now, by assumption, changes in value at a state are aligned with changes in the potential function so that
+
+$$
+\Phi(s,\asub{\pi}{b^i}) - \Phi(s,\pi) = V^i_{\asub{\pi}{b^i}}(s) - V^i_{\pi}(s) = u^i_s(\asub{a}{b^i}) - u^i_s(a)
+$$
+
+So the function
+$$
+\phi_s(a) = \Phi(s,\pi)
+$$
+
+is a potential function for the stage game $G_s$. Hence $\Gamma$ satisfies the first property of SPGs.
+
+Now we must examine the transition probabilities of $\Gamma$. Consider a state $s$, a joint pure behavior $\pi$ with $\pi_s = a$, players $i$ and $j$, and $b^i \in \AA^i$ and $b^j \in \AA^j$ alternative actions for players $i$ and $j$ in state $s$. Since the stage game in state $s$ is a potential game, we have that
+
+$$
+\Phi(s,\asub{\pi}{b^ib^j}) - \Phi(s,\asub{\pi}{b^i}) + \Phi(s,\asub{\pi}{b^i}) - \Phi(s,\pi) \\
+= \\
+\Phi(s,\asub{\pi}{b^ib^j}) - \Phi(s,\asub{\pi}{b^i}) +\Phi(s,\asub{\pi}{b^i}) - \Phi(s,\pi)
+$$
+
+implies that
+
+\begin{align*}
+\sum_{s' \in \SS_{k+1}} \left[P_{ss'}(\asub{a}{b^ib^j}) - P_{ss'}(\asub{a}{b^i})\right] V^j_{\pi}(s') + \sum_{s' \in \SS_{k+1}} \left[P_{ss'}(\asub{a}{b^i}) - P_{ss'}(a)\right] V^i_{\pi}(s') = \\
+\sum_{s' \in \SS_{k+1}} \left[P_{ss'}(\asub{a}{b^ib^j}) - P_{ss'}(\asub{a}{b^j})\right] V^i_{\pi}(s') + \sum_{s' \in \SS_{k+1}} \left[P_{ss'}(\asub{a}{b^j}) - P_{ss'}(a)\right] V^j_{\pi}(s')
+\end{align*}
+
+We can rearrange this to obtain a familiar relationship:
+
+\begin{align*}
+\sum_{s' \in \SS_{k+1}} \left[P_{ss'}(\asub{a}{b^ib^j})- P_{ss'}(\asub{a}{b^i}) - P_{ss'}(\asub{a}{b^j}) +  P_{ss'}(a)\right] V^i_{\pi}(s') \\
+= \sum_{s' \in \SS_{k+1}} \left[P_{ss'}(\asub{a}{b^ib^j}) - P_{ss'}(\asub{a}{b^i}) - P_{ss'}(\asub{a}{b^j}) +  P_{ss'}(a)\right] V^j_{\pi}(s')
+\label{eq:gpgcons}
+\end{align*}
+
+
+Notice that this equation resembles equation \ref{eq:continuation} except the continuation vectors $z^i$ are replaced by expected rewards $V^i_{\pi}(s)$. With arbitrary $z^i$, we could construct them such that the only way to satisfy the equations was to have modular dynamics. In contrast, the $V^i_{\pi}(s)$ are given as part of the stochastic game, and span a comparatively low-dimensional subspace. This is most readily seen in the case of team games, where $V^i_{\pi}(s) = V^j{\pi}(s)$ for all $i$ and $j$, so that they span a one-dimensional space. 
+
+*We can add a definition / assumption about this. It would amount to something a bit stronger than the termination property, which is something like: 'There are joint behaviors that give one player reward one and all others reward zero.'*
+
+\end{proof}
+
+\subsection{Further constraints on SGPGs}
+
+Notice that in the preceding analysis, we made use of consistency equations \ref{eq:gpgcons} for SGPGs in which the changes in player $i$ and player $j$'s behaviors occur in the same state $s$. However, if we vary the states that the behavior changes occur in, we can derive a much larger set of consistency equations that restrict the form of SGPGs even further. 
+
+Suppose alternative actions $b^i$ and $b^j$ occur in adjacent layers, that is, in states $s_1 \in \SS_k$ and $s_2 \in \SS_{k+1}$ respectively. Fix a baseline joint pure behavior $\pi$, and for notational simplicity let $a_1 = \pi_{s_1}$ and $a_2 = \pi_{s_2}$. As usual, we start from the consistency equation
+
+$$
+\Phi(s_1,\asub{\pi}{b^ib^j}) - \Phi(s_1,\asub{\pi}{b^i}) + \Phi(s_1,\asub{\pi}{b^i}) -
+\Phi(s_1,\pi)
+=
+\Phi(s_1,\asub{\pi}{b^ib^j}) - \Phi(s_1,\asub{\pi}{b^j}) + \Phi(s_1,\asub{\pi}{b^j}) -
+\Phi(s_1,\pi)
+$$
+
+Replacing each difference with a difference in values, and then simplifying yields:
+
+\begin{align*}
+\Phi(s_1,\asub{\pi}{b^ib^j}) - \Phi(s_1,\asub{\pi}{b^i}) = & u^j_{s_1}(\asub{a_1}{b^i}) + \sum_{s' \in \SS_{k+1}} P_{s_1s'}(\asub{a_1}{b^i})V^j_{\asub{\pi}{b^ib^j}}(s') \\
+& - u^j_{s_1}(\asub{a_1}{b^i}) - \sum_{s' \in \SS_{k+1}} P_{s_1s'}(\asub{a_1}{b^i})V^j_{\asub{\pi}{b^ib^j}}(s')
+\end{align*}
+
+Notice that changing actions in earlier layer states has no effect on the value of later states so 
+
+$$
+V^j_{\asub{\pi}{b^ib^j}}(s') = V^j_{\asub{\pi}{b^j}}(s')
+$$
+
+Furthermore, when $s' \neq s_2$, 
+$$
+V^j_{\asub{\pi}{b^j}}(s') = V^j_{\pi}(s')
+$$
+
+So most terms above cancel, leaving
+
+$$
+\Phi(s_1,\asub{\pi}{b^ib^j}) - \Phi(s_1,\asub{\pi}{b^i}) = P_{s_1s_2}(\asub{a_1}{b^i}) \left[Q^j_{\pi}(s_2, \asub{a_2}{b^j}) - Q^j_{\pi}(s_2, a_2)\right]
+$$
+
+Following a similar process for the other differences in the consistency equation we get
+
+\begin{align*}
+&\Phi(s_1,\asub{\pi}{b^i}) - \Phi(s_1,\pi) = u^i_{s_1}(\asub{a_1}{b^i}) - u^i_{s_1}(a) + \left[P_{s_1s_2}(\asub{a_1}{b^i}) - P_{s_1s_2}(a)\right] V^i_{\pi}(s_2) \\
+&\\
+&\Phi(s_1,\asub{\pi}{b^ib^j}) - \Phi(s_1,\asub{\pi}{b^j}) = u^i_{s_1}(\asub{a_1}{b^i}) - u^i_{s_1}(a) + \left[P_{s_1s_2}(\asub{a_1}{b^i}) - P_{s_1s_2}(a)\right] Q^i_{\pi}(s_2, \asub{a_2}{b^j})\\
+&\\
+&\Phi(s_1,\asub{\pi}{b^j}) - \Phi(s_1,\pi) = P_{s_1s_2}(a_1) \left[Q^j_{\pi}(s_2, \asub{a_2}{b^j}) - V^j_{\pi}(s_2)\right]
+\end{align*}
+
+
+Substituting these into the original consistency equation and rearranging terms results in
+
+\begin{align*}
+\left(P_{s_1s_2}(a) - P_{s_1s_2}(\asub{a}{b^i}) \right)\left(Q^i_{\pi}(s_2, \asub{a_2}{b^j}) - Q^i_{\pi}(s_2, a_2)\right) \\
+= \left(P_{s_1s_2}(a) - P_{s_1s_2}(\asub{a}{b^i}) \right)\left(Q^j_{\pi}(s_2, \asub{a_2}{b^j}) - Q^j_{\pi}(s_2, a_2)\right)
+\end{align*}
+
+
+** Add an analysis about what this means. Close to a team game **
+
+\subsection{Equilibria}

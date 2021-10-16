@@ -1,0 +1,35 @@
+\begin{tikzpicture}[scale=2]
+\def\a{2.65}
+\draw[opacity=0.4] (\a,0) circle (1);
+\foreach \s in {1,2,3,4,5,6}
+{
+	\coordinate (a\s) at ($({90+60*\s}:0.6)+(\a,0)$);
+	\draw[fill=black] (a\s) circle (1.2pt);
+	\coordinate (b\s) at ($({60*\s}:1)+(\a,0)$);
+	\draw[fill=black] (b\s) circle (1.2pt);
+};
+\draw (a1)--(a2)--(a3)--(a4)--(a5)--(a6)--(a1);
+\draw (a5) -- (b1)--(a6)--(b2)--(a1)--(b3)--(a2)-- (b4)--(a3) -- (b5)--(a4)--(b6)--(a5);
+
+\draw[opacity=0.4] (-\a,0) circle (1);
+\foreach \s in {1,2,3,4}
+{
+	\coordinate (c\s) at ($({90+360*\s/4}:0.6)-(\a,0)$);
+	\draw[fill=black] (c\s) circle (1.2pt);
+	\coordinate (d\s) at ($({360*(\s+0.5)/4}:1)-(\a,0)$);
+	\draw[fill=black] (d\s) circle (1.2pt);
+};
+\draw (c1) -- (c2) -- (c3) -- (c4) -- (c1);
+\draw (c3) -- (d4) -- (c4) -- (d1) -- (c1) -- (d2) -- (c2) -- (d3) -- (c3);
+
+\draw[opacity=0.4] (0,0) circle (1);
+\foreach \s in {1,2,3,4,5}
+{
+	\coordinate (e\s) at ($({54+360*\s/5}:0.6)$);
+	\draw[fill=black] (e\s) circle (1.2pt);
+	\coordinate (f\s) at ($({-18+72*(\s+0.5)}:1)$);
+	\draw[fill=black] (f\s) circle (1.2pt);
+};
+\draw (e1) -- (e2) -- (e3) -- (e4) -- (e5) -- (e1);
+\draw (e3) -- (f4) -- (e4) -- (f5) -- (e5) -- (f1) -- (e1) -- (f2) -- (e2) -- (f3) -- (e3);
+\end{tikzpicture}

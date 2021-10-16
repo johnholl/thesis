@@ -1,0 +1,325 @@
+
+\section{Log-linear Learning}
+
+The goal of this section is to define a learning algorithm for stochastic games that resembles the log-linear algorithm used in iterated normal form games. We will begin by reviewing log-linear learning (LLL) and stating the main convergence results in iterated games. We will then describe a variant that converges to potential maximizing equilibrium in SGPGs. Finally we will discuss the challenge of extending LLL to SPGs.
+
+\subsection{Log-linear Learning in Repeated Normal-form Games}
+
+Log-linear learning is a learning algorithm that provably converges to pure Nash equilibria in potential games. That is, if players repeatedly play the same normal-form game, adjusting their strategies at each timestep according to LLL, then their play will approach a pure Nash equilibrium in probability. In fact, one can say even more: LLL will converge to {\em potential--maximizing} pure Nash equilibria. This is referred to as an "equilibrium-selection property" in that the algorithm converges to a particular type of Nash equilibrium. In the context of potential games, the potential function often characterizes some notion of social/global utility, and so it can be valuable to have an algorithm that will converge to such behavior.
+
+LLL proceeds as follows. At each timestep $t$, players simultaneously select actions $a^i \in \AA^i$ and receive utility $u^i(a)$. The players select these actions according to probability distributions $x^i \in \AA^i$ over their action sets. The players update these distributions as follows. At time $t$, one player $i$ is selected uniformly at random and generates a distribution $x^i_t$. All other players will play the same action they did at the previous timestep, ie $a_{t}^{j} = a_{t-1}^{j}$ for players $j \neq i$. In contrast, player $i$ will play by sampling from the distribution
+
+$$
+x^i_t(a) = \dfrac{e^{u^i(a, a_{t-1}^{-i})}/\tau}{\sum_{b \in \AA^i} e^{u^i(b, a_{t-1}^{-i})}/\tau},
+$$
+
+\noindent where $a_{t-1}^{-i}$ is the list of actions played at time $t-1$ by players other than player $i$, $x^i_t(a)$ is the probability of selecting action $a$ under the distribution $x^i_t$, and $\tau$ is a {\em temperature parameter}. Notice that as the temperature parameter tends to zero, the probability distribution concentrates on best responses to the other players' actions at the last timestep. In \cite{blume1993statistical} they show that the stationary distribution $\mu$ of joint strategies is
+
+$$
+\mu(a) = \dfrac{e^{\phi(a)/\tau}}{\sum_{b} e^{\phi(b)/\tau}},
+$$
+
+\noindent where $b$ varies over the set of joint actions $b \in \times_i \AA^i$.
+
+From this explicit form of the stationary distribution it follows that as the temperature is brought to zero, the joint distribution concentrates on potential maximizing joint behaviors.
+
+
+In \cite{marden2012revisiting} the authors provide an alternative proof method using the theory of resistance trees in Markov processes. This allows them to characterize the stochastically stable states, which are exactly the potential maximizing joint actions, without explicitly writing down the stationary distribution.
+
+\subsubsection{Theory of resistance trees}
+
+Let $P^0$ denote the probability transition matrix for a finite state Markov chain over the state space $Z$. We refer to $P^0$ as the unperturbed process. Consider a perturbed process where the size of the perturbation is indexed by a scalar $\epsilon > 0$, and let $P^{\epsilon}$ be the associated transition matrix. The process $P^{\epsilon}$ is called a regular perturbed Markov process if $P^{\epsilon}$ is ergodic for sufficiently small $\epsilon$ and $P^{\epsilon}$ approaches $P^0$ at an exponentially smooth rate. Specifically, the latter condition means that for all $z, z' \in Z$,
+
+$$
+\lim_{\epsilon \rightarrow 0^+} P^{\epsilon}_{z \rightarrow z'} = P^0_{z \rightarrow z'}
+$$
+
+and,
+
+$$
+P^{\epsilon}_{z \rightarrow z'} > 0 \mbox{ for some } \epsilon > 0 \mbox{ implies } \lim_{\epsilon \rightarrow 0^+} \dfrac{P^{\epsilon}_{z \rightarrow z'}}{\epsilon^{R(z \rightarrow z'}}
+$$
+
+for some nonnegative real number $R(z \rightarrow z')$, which we call the {\em resistance} of the transition $z \rightarrow z'$ under the perturbed process. 
+
+Consider a complete directed graph with $|Z|$ vertices for each state. The vertex corresponding to state $z_j$ will be called $j$. The weight on the directed edge $i \rightarrow j$ is the resistance $R(z_i \rightarrow z_j)$. A $j$-tree, or ``tree rooted at $j$'', is a directed tree $T$ such that all paths terminate at $j$. The resistance of $T$ is the sum of the edge resistances composing it, and the {\em stochastic potential}, $\gamma_j$, of $z_j$ is the minimum resistance among all $j$-trees.
+
+\begin{thm}\cite{young1993evolution}
+Let $P^{\epsilon}$ be a regular perturbed Markov process, and for each $\epsilon > 0$ let $\mu^{\epsilon}$ be the unique stationary distribution of $P^{\epsilon}$. Then $\lim_{\epsilon \rightarrow 0^+} \mu_{\epsilon}$ exists and the limiting distribution $\mu^0$ is a stationary distribution of $P^0$. The stochastically stable states (i.e. the support of $\mu^0$) are precisely those states with minimal stochastic potential. Furthermore, if a state is stochastically stable then the state must be in a recurrent class of the unperturbed process $P^0$.
+\label{thm:evconv}
+\end{thm}
+
+In \cite{marden2012revisiting} the authors show that log-linear learning converges to potential maximizing behavior by proving the following sequence of results:
+
+\begin{lem}[\cite{marden2012revisiting} Lemma 3.1]
+Log-linear learning induces a regular perturbed Markov process where the unperturbed Markov process is an asynchronous best reply process and the resistance of any feasible transition $a \rightarrow b = (b^i, a^{-i})$ is
+$$
+R(a \rightarrow b) = \max_{a^i_* \in \AA^i} u^i(a^i_*, a^{-i}) - u^i(b)
+$$
+\end{lem}
+
+
+\begin{lem}[\cite{marden2012revisiting} Lemma 3.2]
+Consider any finite $n$-player potential game with potential function $\phi: \AA \rightarrow \R$ where all players adhere to log-linear learning. For any feasible action path
+$$
+\PP = \{a^0 \rightarrow a^1 \rightarrow \cdots \rightarrow a^m\}
+$$
+
+\noindent and its reverse path
+
+$$
+\PP^R = \{a^m \rightarrow a^{m-1} \rightarrow \cdots \rightarrow a^0\}, 
+$$
+
+\noindent the difference in the total resistance across the paths is
+
+$$
+R(\PP) - R(\PP^R) = \phi(a^0) - \phi(a^m).
+$$
+\end{lem}
+
+Finally,
+
+\begin{prop}[\cite{marden2012revisiting} Proposition 3.1]
+Consider any finite $n$-player potential game with potential function $\phi: \AA \rightarrow \R$ where all players adhere to log-linear learning. The stochastically stable states are the set of potential maximizers, i.e., $\{ a \in \AA : \phi(a) = \max_{a^* \in \AA} \phi(a^*)  \}$
+\end{prop}
+
+
+
+
+\subsection{Generalization to Stochastic Games, and Convergence in Stochastic Global Potential Games}
+
+This section will generalize log-linear learning to the stochastic setting and show that, in the case of stochastic global potential games, the stochastically stable states of generalized log-linear learning are precisely those joint behaviors that maximize the global potential function. 
+
+Generalized log-linear learning proceeds as follows. At each timestep $t$, players select pure behaviors $\pi^i$. The players update their behavior choices as follows. At time $t$, a player $i$ and a state $s$ are selected uniformly at random. Player $i$ will generate a distribution $x^i_s$. All other players select the same behavior as they did at the previous timestep, i.e. $\pi_t^j = \pi_{t-1}^j$ for players $j \neq i$. In contrast, player $i$ will play by sampling from the distribution
+
+$$
+x^i_s(a) = \dfrac{e^{V^i_{\asub{\pi_{t-1}}{a}}(s_0)/\tau}}{\sum_{b \in \AA^i} e^{V^i_{\asub{\pi_{t-1}}{b}}(s_0)/\tau} },
+$$
+
+\noindent where $\pi_{t-1}$ is the joint behavior played at time $t-1$ and $s_0$ is the initial state of the stochastic game. $x^i_s(a)$ is the probability of selecting action $a$ in state $s$ under the distribution $x^i_s$, and $\tau$ is a {\em temperature parameter}. 
+
+It is important to note that this learning method is not based solely on payoff outcomes. It requires that players are able to compute their state values in order to update their strategy.
+
+
+\begin{lem}
+Generalized log-linear is a regular perturbed Markov process where the resistance of any feasible transition $\pi \rightarrow \tau = (a^i_s, \pi^{-i})$ is
+$$
+R(\pi \rightarrow \tau) = \max_{a^i_* \in \AA^i} V^i_{\asub{\pi}{a^i_*}}(s_0) - V^i_{\tau}(s_0)
+$$
+\end{lem}
+
+\begin{proof}
+The unperturbed process behaves as follows for each timestep $t > 0$. Choose a player $i$ and state $s$, both uniformly at random. Change player $i$'s action in that timestep to an element of $a_* \in \argmax_a {V^i_{\asub{\pi_{t-1}}{a}}(s_0)}$. Keep the behavior of player $i$ in all other states unchanged, and keep the behaviors of all other players the same.
+
+Let $\epsilon = e^{-1/\tau}$. Under the perturbed process $P^{\epsilon}$, the probability of transitioning from $\pi$ to $\tau$ is
+
+$$
+P^{\epsilon}_{\pi \rightarrow \tau} = \dfrac{1}{n} \dfrac{1}{|\SS|} \dfrac{\epsilon^{-V^i_{\asub{\pi}{a^i_s}}(s_0)}}{\sum_{b \in \AA^i} \epsilon^{-V^i_{\asub{\pi}{b}}(s_0)}}
+$$
+
+Let $W_i(s, \pi) = \max_{a \in \AA^i} V^i_{\asub{\pi}{a}}(s_0)$. Multiply the numerator and denominator by $\epsilon^{W_i(s, \pi)}$ yields
+
+$$
+P^{\epsilon}_{\pi \rightarrow \tau} = \dfrac{1}{n} \dfrac{1}{|\SS|} \dfrac{\epsilon^{W_i(s, \pi)-V^i_{\asub{\pi}{a}}(s_0)}}{\sum_{b \in \AA^i} \epsilon^{W_i(s, \pi)-V^i_{\asub{\pi}{a}}(s_0)}}
+$$
+
+So then,
+
+$$
+\lim_{\epsilon \rightarrow 0^+} \dfrac{P^{\epsilon}_{\pi \rightarrow \tau}}{\epsilon^{W_i(s, \pi)-V^i_{\asub{\pi}{a}}(s_0)}} \\
+= \lim_{\epsilon \rightarrow 0^+} \dfrac{1}{n |\SS|} \dfrac{1}{\sum_{b \in \AA^i} \epsilon^{W_i(s, \pi)-V^i_{\asub{\pi}{a}}(s_0)}}
+$$
+
+The summands in the denominator will approach either 0 or 1 depending on if $b$ is in $\argmax V^i_{\asub{\pi}{a}}(s_0)$. So this limit is equal to
+
+$$
+\dfrac{1}{n |\SS| |\argmax V^i_{\asub{pi}{a}}(s_0)|}
+$$
+
+Therefore generalized log-linear learning is a regular perturbed Markov process with resistances
+$$
+R(\pi \rightarrow \tau) = \max_{a^i_* \in \AA^i} V^i_{\asub{\pi}{a^i_*}}(s_0) - V^i_{\tau}(s_0)
+$$
+\end{proof}
+
+In order to relate the graph-theoretic notion of stochastic potential to the stochastic game-theoretic notion of global potential we must define feasible paths and reverse paths. A feasible path is a sequence of joint behaviors $\PP = \{\pi_0 \rightarrow \pi_1 \rightarrow \cdots \rightarrow \pi_m\}$ such that two adjacent behaviors differ by the action of a single player in a single state. The resistance $R(\PP)$ of a path is the sum of edge resistances
+
+$$
+R(\PP) = \sum_{i=1}^n R(\pi_{i-1} \rightarrow \pi_i)
+$$
+
+The reverse path consists of the same joint behaviors, but with arrows travelling in the opposite direction. We can relate path resistances with changes in global potential with the following lemma.
+
+
+\begin{lem}
+Consider any finite $n$-player SGPG with potential function $\Phi: \AA \rightarrow \R$ where all players adhere to log-linear learning. For any feasible action path
+$$
+\PP = \{\pi_0 \rightarrow \pi_1 \rightarrow \cdots \rightarrow \pi_m\}
+$$
+
+and its reverse path
+
+$$
+\PP^R = \{\pi_m \rightarrow \pi_{m-1} \rightarrow \cdots \rightarrow \pi_0\}
+$$
+
+the difference in the total resistance across the paths is
+
+$$
+R(\PP) - R(\PP^R) = \phi(s_0, \pi_0) - \phi(s_0, \pi_m)
+$$
+\end{lem}
+
+\begin{proof}
+Consider a single edge $\pi_k \rightarrow \pi_{k+1}$ in the path and its reverse $\pi_{k+1} \rightarrow \pi_k$. By the previous lemma we have
+
+$$
+R(\pi_k \rightarrow \pi_{k+1}) = W_i(s, \pi_k) - V^i_{\pi_{k+1}}(s_0) \\
+R(\pi_{k+1} \rightarrow \pi_{k}) = W_i(s, \pi_{k+1}) - V^i_{\pi_k}(s_0)
+$$
+
+Since $\pi_k$ and $\pi_{k+1}$ only differ by player $i$'s action in state $s$ we have that:
+
+$$
+W_i(s, \pi_{k+1}) = W_i(s, \pi_{k}) \\
+$$
+
+So then
+
+$$
+R(\PP) - R(\PP^R) = V^i_{\pi_k}(s_0) - V^i_{\pi_{k+1}}(s_0) = \Phi(s_0, \pi_k) - \Phi(s_0, \pi_{k+1})
+$$
+
+Adding these differences up over all pairs in the path gives the desired result.
+\end{proof}
+
+
+
+\begin{prop}
+Consider any finite $n$-player SGPG $G$ with potential function $\Phi: \AA \rightarrow \R$ where all players adhere to log-linear learning. The stochastically stable states are the set of potential maximizers, i.e., $\{ \pi : \Phi(\pi) = \max_{\pi_*} \Phi(\pi_*)  \}$
+\end{prop}
+
+\begin{proof}
+Let $\pi$ be a behavior with minimum stochastic potential, and let $\Gamma$ be a $\pi$-tree that realizes this stochastic potential. Let $\pi_*$ be a behavior that minimizes $\Phi(s_0, \cdot)$.
+
+Within the graph $\Gamma$ there is a path $\PP$ beginning at $\pi_*$ and ending at $\pi$. Let $\Gamma_*$ be the graph obtained by removing $\PP$ from $\Gamma$ and replacing it with $\PP^R$. So $\Gamma_*$ is a tree rooted at $\pi_*$. By the previous lemma,
+
+$$
+R(\Gamma) - R(\Gamma_*) = \Phi(s_0, \pi) - \Phi(s_0, \pi_*).
+$$
+
+Since $\pi$ has minimum stochastic potential, the right hand side of the equation is greater than or equal to zero. Hence
+
+$$
+\Phi(s_0, \pi) \leq \Phi(s_0, \pi_*)
+$$
+
+and so $\pi$ must also minimize $\Phi(s_0, *)$.
+\end{proof}
+
+
+
+\subsection{Log-linear learning in SPGs}
+
+
+The first question we need to answer when addressing log-linear learning for SPGs is one of goals. In repeated potential games, log-linear learning is attractive as a method because it guarantees potential maximizing behavior. Potential maximizers are a subset of pure Nash equilibria in potential games, and therefore log-linear learning exhibits an "equilibrium selection" property, in that it selects Nash equilibria with an additional restriction (namely those that maximize potential). When we extended log-linear learning to SGPGs there was still a clear goal: define a learning algorithm whose stationary distribution is supported on Nash equilibria that maximize the global potential function. Generalized log-linear learning selects for these more restrictive Nash equilibria in SGPGs. In contrast, an SPG does not necessarily have a global potential function, and so first we need to describe the kind of equilibria we would like log-linear learning to select for in SPGs. The kind of equilibria we are interested in are {\em simultaneously potential--maximizing}.
+
+\begin{mydef}
+Let $G$ be an SPG. A joint behavior $\pi$ is simultaneously potential maximizing if for all states $s$, the joint strategy $\pi_s$ is a potential maximizing strategy in the continuation stage game $G_s(V_{\pi})$. 
+\end{mydef}
+
+Recall that for an SPG $G$, any continuation game $G_s(c)$ is a potential game. As a result we are able to talk about potential maximizing strategies for $G_s(V_{\pi})$. 
+
+
+We've remedied one issue that the lack of global potential presents us. However, there is a deeper issue: without a global potential function we do not have a global way to characterize resistances in log-linear learning for SPGs. As a result, a "naive" attempt to use log-linear learning in SPGs will fail. We will illustrate this with an example of an SPG that does not converge under a naive log-linear learning rule. Like all of our previous discussions of SPGs, we will be in the fixed finite-time setting.
+
+{\bf Naive log-linear learning}. At each timestep $t$ all players select actions $a^i_s(t)$ in all states simultaneously. Let $a_s(t)$ denote the joint action taken in state $s$ at time $t$, and $a(t)$ denote the entire behavior at time $t$. At time $t$, a player $i$ and state $s$ are selected uniformly at random. Player $i$ selects an action according to the distribution
+
+$$
+pr(a^i) = \dfrac{e^{Q^i_{a(t-1)}(s, a^i, a^{-i}_s(t-1))/\tau}}{\sum_{b^i}e^{Q^i_{a(t-1)}(s, b^i, a^{-i}_s(t-1))/\tau}}
+$$
+
+where $\tau$ is a temperature parameter. The action taken in all other states is the same as at time $t-1$, and the action taken by all other players in state $s$ is the same as at time $t-1$. We are interested in understanding the stochastically stable states of this process. Namely we'd like to answer
+
+\begin{enumerate}
+\item In an SPG, are the stochastically stable states of this process simultaneously potential maximizing Nash equilibria?
+\item In an SPG, are the stochastically stable states of this process Nash equilibria?
+\end{enumerate}
+
+The following example will show that neither of these statements is necessarily true.
+
+
+\begin{eg}
+Consider the 3 state, 2-horizon game $G$ described as follows. $G$ is a two player game, and in each state both players have two actions $a$ and $b$. Every episode begins in state $s_1$ and transitions either to state $s_2$ or $s_3$ where the players take a final move and the episode ends. The stage games for $s_1$ and $s_3$ are trivial (that is, all utilities are zero) and the stage game for $s_2$ is defined by the bimatrix:
+
+\[
+\begin{blockarray}{ccc}
+ & a & b \\
+\begin{block}{c(cc)}
+  a & 100,100 & -100,100 \\
+  b & 100,-100 & -100,-100 \\
+\end{block}
+\end{blockarray}
+ \]
+
+Notice that by construction, all stage games are potential games with trivial potential functions $\phi \equiv 0$. The transition matrices are
+
+$$
+P_{12} = 
+\begin{pmatrix} 
+0 & 0.5 \\
+0.5 & 1 
+\end{pmatrix}
+$$
+
+and
+
+$$
+P_{13} = 
+\begin{pmatrix} 
+1 & 0.5 \\
+0.5 & 0
+\end{pmatrix}
+$$
+
+One can describe the pure Nash equilibria of this game as follows. Both players may act arbitrarily in state $s_3$ and $s_2$ (since all actions are potential maximizing in those states). However, the action to be taken in state $s_1$ is determined based on the action in $s_2$. The equilibria are:
+
+\[
+\begin{blockarray}{ccc}
+ s_1 & s_2 & s_3 \\
+\begin{block}{ccc}
+  (a,a) & (a,a) & (\cdot, \cdot) \\
+  (a,b) & (a,b) & (\cdot, \cdot) \\
+  (b,a) & (b,a) & (\cdot, \cdot) \\
+  (b,b) & (b,b) & (\cdot, \cdot) \\
+\end{block}
+\end{blockarray}
+ \]
+ 
+Where $(\cdot, \cdot)$ denotes that the players may perform any actions in $s_3$. 
+
+Now, suppose players adhere to log-linear learning as described above. Our goal is to show that the unperturbed process may move the behavior out of Nash equilibrium. Suppose at time $t$ the joint action is
+\begin{align*}
+a^1(t) = [a, a, a] \\
+a^2(t) = [a, a, a]
+\end{align*}
+
+With positive probability, the following will occur at time t:
+\begin{itemize}
+\item state 2 is selected
+\item player 2 is selected
+\item player 2 changes their action from $a$ to $b$
+\end{itemize}
+
+But then the new joint action is
+\begin{align*}
+a^1(t) = [a, a, a] \\
+a^2(t) = [a, b, a]
+\end{align*}
+
+which does not simultaneously maximize potentials, and is not a Nash equilibrium.
+
+\end{eg}
+
+The problem that this example brings forward is that an action change in a layer $k$ state may alter the continuation games played in layer $l < k$ states such that their behaviors are no longer Nash equilibria. This is exactly what happens in our example---asynchronous best response dynamics can alter the behavior in state $s_2$, which in turn changes the continuation game played at $s_1$ and what constitutes Nash equilibrium.

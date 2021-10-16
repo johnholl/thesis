@@ -1,0 +1,35 @@
+\ctikzset{bipoles/length=.8cm}
+\begin{tikzpicture}[scale=0.75]
+\def\c{-6}
+\coordinate (a) at (-2.2+\c,0);
+\coordinate (b) at (\c,1.45);
+\coordinate (c) at (\c,-1.45);
+\coordinate (d) at (\c+2.2,0);
+\draw (a) -- (b) -- (d) -- (c) -- (a);
+\draw (b) -- (c);
+\draw[fill=white] (a) circle (3pt);
+\draw[fill=black] (b) circle (3pt);
+\draw[fill=black] (c) circle (3pt);
+\draw[fill=white] (d) circle (3pt);
+
+\def\a{5.5}
+\draw[fill=black!20] ({-1+\a},-1) -- ({\a+1},-1) -- ({\a+1},1) -- ({\a-1},1) -- cycle;
+\draw ({\a-1},-1.618) -- ({\a-1},1.618);
+\draw ({\a+1},-1.618) -- ({\a+1},1.618);
+\draw ({\a-1.618},-1) -- ({\a+1.618},-1);
+\draw ({\a-1.618},1) -- ({\a+1.618},1);
+\draw ({\a-1.618},-1.618) -- ({\a+1.618},1.618);
+
+\def\b{0}
+\coordinate (a1) at (-1.8+\b,-0.25);
+\coordinate (b1) at (\b,0.95);
+\coordinate (c1) at (\b,-1.45);
+\coordinate (d1) at (1.8+\b,-0.25);
+\draw (a1) to [R] (b1) to [R] (d1) to [R] (c1) to [R] (a1);
+\draw (b1) to [R] (c1);
+\draw (a1) to ++(-0.3,0) to ++(0,1.75) to[battery] ++(4.2,0) to ++(0,-1.75) to (d1);
+\draw[fill=black] (a1) circle (2pt);
+\draw[fill=black] (b1) circle (2pt);
+\draw[fill=black] (c1) circle (2pt);
+\draw[fill=black] (d1) circle (2pt);
+\end{tikzpicture}

@@ -1,0 +1,132 @@
+\section{Learning in Iterated Normal Form Games}
+
+
+\subsection{General Background}
+The traditional view of game theory views equilibrium as the end result of computation done by rational agents with complete knowledge of a game. For example, when we looked at the example of matching pennies in the previous section, we noted that there is no pure Nash equilibrium, and that there is a single mixed strategy equilibrium in the game. We did this without "playing" the game. We simply noted the structure of the utility functions and came to this conclusion theoretically. We could have done a formal analysis showing that the mixed strategy uniquely simultaneously maximizes the utility functions.
+
+Learning in games takes an alternative, experiential perspective on equilibrium. It views equilibrium as the end result or limit of a process in which players repeatedly face an instance of a game and adapt their strategy over time. Depending on which players are adapting, and how much information each knows about the game, various situations and questions can be fit into this paradigm. These subjects fill entire books \cite{fudenberg1998theory}; we provide a small sampling below.
+
+The following is the general set up that we mean by {\em learning in iterated games}. We begin with a fixed $n$-player game $G$ and play proceeds sequentially at discrete timesteps. At each timestep $t$, players are faced with an instance (we will refer to this as an {\em iterate}) of the game $G$. Each player selects a strategy at time $t$. Let $h_t$ denote the history of actions and received utilities for all players up to time $t$. A learning method $\mathcal{L}$, or adaptive strategy, is a function which maps a play history, utility functions $u_t$, and player index $i$ to a player strategy $x^i_t$:
+
+\begin{equation}
+    \mathcal{L}(h_t, u_t, i) = x^i_t
+\end{equation}
+
+It is of course not necessary for the learning method to make use of all input information. For example, some adaptive strategies do not assume that players have knowledge of utility functions, so that the calculation of $x^i_t$ does not use $u_t$, perhaps they only have knowledge of their own utility function (so only $u_t^i$ may appear in the calculation). A very simple learning method simply assigns a constant strategy, $x^i$ to player $i$ regardless of history and utilities:
+
+\begin{equation}
+    \mathcal{L}(h_t, u_t, i) = x^i
+\end{equation}
+
+Let's consider a few examples that fit into the iterated game learning paradigm. For example, first suppose only one player is able to adapt their strategy across these instances, while all other players' strategies are fixed. That is, for all players other than $i$, the learning method is constant. In this case, the player that is adapting is faced with an MDP with only a single state. As such, there are a number of adaptive strategies that the player may employ to optimize their utility. First, suppose the player has complete knowledge of its own utility function and the strategies of all other players. In this case, the player may directly compute 
+
+\begin{equation}
+    \mathcal{L}(h_t, u_t, i) = \text{argmax}_{a^* \in \AA^i} \mathbb{E}_{a^{-i}} \left[ u^i(b^i, a^{-i}) \right]
+\label{eq:easylearning}
+\end{equation}
+
+This player "learns" to play optimally in one step. On the other end of the spectrum, suppose that the player only has access to its own history of actions and the resulting realized utility. In this situation, the player cannot immediately compute \ref{eq:easylearning}, however they may learn it over multiple timesteps via a model-free reinforcement learning such as Q-learning. Note that in both cases described above, the limiting joint strategy is likely not a Nash equilibrium, since only one player has been allowed to update their strategy.
+
+\subsubsection{Best response dynamics}
+Now suppose that all players adapt their strategy as they iterate $G$. If each player has knowledge of their utility function, and of the actions played by all other players at the previous timestep, then they may employ {\em best response dynamics}. The best response dynamic is one of the first studied \cite{nash1950equilibrium} adaptive rules for learning in games and it has an exceptionally simple description. In the first timestep, players select their actions arbitrarily, leading to an initial joint action $a_0$. For $t>0$, player $i$ will select an action uniformly from the set of best responses to the previous opponent action $a^{-i}_{t-1}$. We can write down the best response learning dynamic $\mathcal{L}_{BR}$ as follows
+
+\begin{equation}
+    \mathcal{L}_{BR}(h_t, u_t, i) = \text{unif}\left(\mathcal{BR}(a^{-i}_{t-1})\right)
+\end{equation}
+
+where unif() is the uniform distribution over the set of best responses. Depending on the structure of the game, best response dynamics may or may not converge to Nash equilibrium. For example, in matching pennies, suppose player 1 begins by playing $H$ and player 2 begins by playing $T$. \ref{fig:mpdynamic} shows the first 6 timesteps of best response dynamics.
+
+\begin{figure}
+\begin{center}
+ \begin{tabular}{||c c c||} 
+ \hline
+ timestep & player 1 action & player 2 action \\ [0.5ex] 
+ \hline\hline
+ 0 & H & T \\ 
+ \hline
+ 1 & T & T \\ 
+ \hline
+ 2 & T & H \\
+ \hline
+ 3 & H & H \\
+ \hline
+ 4 & H & T \\
+ \hline
+ 5 & T & T  \\ [1ex] 
+ \hline
+\end{tabular}
+\end{center}
+\caption{Plays in matching pennies under best response dynamics.}
+\label{fig:mpdynamic}
+\end{figure}
+
+As we can see, the strategies cycle every four timesteps. At no point in time do the player strategies constitute a Nash equilibrium - this is immediately clear since their strategies at each timestep are deterministic and the only Nash equilibrium is mixed. However, the {\em empirical frequencies} of play do approach the unique Nash equilibrium, since both players will play $H$ half the time and $T$ the other half of the time. We call this {\em empirical frequency convergence}, and consider it a less desirable outcome than if the play itself {\em directly converged} to Nash equilibrium. There are games for which best response dynamics do not even converge in empirical frequency.
+
+In contrast, consider best response dynamics applied to the Prisoner's dilemma problem. Suppose that players initially both cooperate with one another (ie they both start with strategy $c$). \ref{fig:pddynamics} shows the immediate convergence of best response dynamics.
+
+\begin{figure}
+\begin{center}
+ \begin{tabular}{||c c c||} 
+ \hline
+ timestep & player 1 action & player 2 action \\ [0.5ex] 
+ \hline\hline
+ 0 & c & c \\ 
+ \hline
+ 1 & d & d \\ 
+ \hline
+ 2 & d & d \\
+ \hline
+ 3 & d & d \\
+ \hline
+\end{tabular}
+\end{center}
+    \caption{Convergence of best response dynamics in the prisoner's dilemma.}
+    \label{fig:pddynamics}
+\end{figure}
+
+In this case the strategies directly converge to the unique pure Nash equilibrium $\left[ d, d \right]$ very quickly. 
+
+Despite being a well known and studied learning method, it can still be hard to determine whether best response dynamics will converge in a given game.
+
+\subsubsection{Fictitious play}
+A closely related learning algorithm is fictitious play (FP) \cite{brown1951iterative}. Fictitious play uses the entire history of opponent strategies, rather than only using the strategy at the previous timestep. At time $t$ player $i$ calculates the empirical frequency of each other player $j$ as
+
+$$
+z_t^j = \dfrac{1}{t} \sum_{k=0}^{t-1} a_k^j
+$$
+
+Player $i$ will then choose their action by uniformly selecting a best response to $z_t^{-i}$:
+
+$$
+\mathcal{L}_{BR}(h_t, u_t, i) = \text{unif}\left(\mathcal{BR}(z^{-i}_{t})\right)
+$$
+
+FP and BR dynamics can behave slightly differently, however, they are {\em almost} the same process. A way of formalizing this is to consider continuous time variants of both FP and BR, where the learning method is defined by a differential equation rather than an iterative formula. One can explicitly compute the gradients of the two processes and see that they are the same up to a time transformation. 
+
+
+\subsubsection{Stochastic fictitious play and Smooth best response}
+
+Stochastic fictitious play (SFP) \cite{fudenberg1993learning} and smooth best response (SBR) dynamics \cite{hofbauer2005learning} are variants of FP and BR that allow for the possibility of direct convergence to mixed equilibria. Like FP and BR, there are few rules for determining whether they will converge in a given game.
+
+
+\subsection{Learning in iterated potential games}
+
+Chapter 3 will focus on extending two learning methods for learning in iterated potential games into the stochastic game setting. These are joint strategy fictitious play (JSFP) with inertia \cite{marden2009joint} and log-linear learning (LLL) \cite{young1993evolution, marden2012revisiting}.  The details of both methods will be explained in Chapter 3, but we will summarize the main characteristics of each below.
+
+\subsubsection{Joint strategy fictitious play with inertia}
+
+\hspace{.25in} {\bf Requirements: } JSFP with inertia requires that all players be able to compute their own utility function. JSFP also requires that players observe the sequence of opponent actions. All players update their strategy at every timestep.
+
+{\bf Convergence Results: } JSFP is guaranteed to converge with probability one to a pure strategy Nash equilibrium in potential games. This strategy need not maximize the potential function. 
+
+\subsubsection{Log linear learning}
+
+\hspace{.25in}{\bf Requirements: } LLL requires that all players be able to compute their own utility function. LLL also requires that players observe the sequence of opponent actions. Only one player updates their strategy at each timestep.
+
+{\bf Convergence Results: } LLL is a perturbed markov process, so it describes a family of Markov processes $\PP^{\epsilon}$ controlled by a single parameter $\epsilon$. For a fixed member of the family with $\epsilon$ sufficiently close to zero, the process is guaranteed to converge to near-potential maximizing joint actions in potential games. This means that the process selects for the specific subset of Nash equilibria that maximize the potential function.
+
+
+
+
+
+

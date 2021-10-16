@@ -1,0 +1,232 @@
+\ProvidesPackage{thesis-sty}
+
+
+\RequirePackage{
+	amsthm,
+	amssymb,
+	amsfonts,
+	amsmath,
+	graphicx,
+	tikz,
+	xcolor,
+	setspace,
+	geometry,
+	comment,
+	scalerel,
+	newtxtext,
+	newtxmath,
+	titletoc,
+	floatrow,
+	mathtools,
+	blkarray,
+	cleveref,
+	verbatim,
+	circuitikz, %you won't need this one
+	algorithm,
+	algorithmic,
+}
+
+\usepackage[hidelinks]{hyperref}
+
+\RequirePackage[shortlabels]{enumitem}
+\usetikzlibrary{
+	calc,
+	svg.path,
+	decorations.markings
+}
+\setlist[enumerate]{nosep}
+\bibliographystyle{abbrv} %can also use plain
+
+
+%This code reproduces the ORCID iD logo in tikz. Style points only
+\tikzset{
+	orcidlogo/.pic={
+		\fill[orcidlogocol] svg{M256,128c0,70.7-57.3,128-128,128C57.3,256,0,198.7,0,128C0,57.3,57.3,0,128,0C198.7,0,256,57.3,256,128z};
+		\fill[white] svg{M86.3,186.2H70.9V79.1h15.4v48.4V186.2z}
+		svg{M108.9,79.1h41.6c39.6,0,57,28.3,57,53.6c0,27.5-21.5,53.6-56.8,53.6h-41.8V79.1z M124.3,172.4h24.5c34.9,0,42.9-26.5,42.9-39.7c0-21.5-13.7-39.7-43.7-39.7h-23.7V172.4z}
+		svg{M88.7,56.8c0,5.5-4.5,10.1-10.1,10.1c-5.6,0-10.1-4.6-10.1-10.1c0-5.6,4.5-10.1,10.1-10.1C84.2,46.7,88.7,51.3,88.7,56.8z};
+	}
+}
+
+\newcommand\orcidicon[1]{\href{https://orcid.org/#1}{\mbox{\scalerel*{
+				\begin{tikzpicture}[yscale=-1,transform shape]
+				\pic{orcidlogo};
+				\end{tikzpicture}
+			}{|}} orcid.org/#1}}
+\definecolor{orcidlogocol}{HTML}{A6CE39}
+
+
+%Theorem styles
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}
+\numberwithin{thm}{section}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{q}[thm]{Question}
+\newtheorem{conj}[thm]{Conjecture}
+\newtheorem*{thmnonum}{Theorem}
+
+\theoremstyle{definition}
+\newtheorem{mydef}[thm]{Definition}
+\newtheorem{eg}[thm]{Example}
+
+\theoremstyle{remark}
+\newtheorem{remark}[thm]{Remark}
+
+\usepackage{titlesec}
+\titleformat{\section}[block]{\Large\bfseries\filcenter}{\thesection}{1em}{}
+% \titlespacing{\section}{}{}{.5in}{}
+
+\titleformat{\subsection}{\Medium\bfseries\filright}{\thesubsection}{1em}{}
+\titlespacing{\subsection}{}{}{.2in}{}
+
+\titleformat{\chapter}[display]{\bfseries\centering}{\huge Chapter \thechapter}{1em}{\Huge }
+
+
+
+\renewcommand{\contentsname}{\begin{center} Contents \end{center}}
+
+
+
+\usepackage{tocloft}
+\renewcommand{\cftchapfont}{\bfseries}
+\renewcommand{\cftchappagefont}{\bfseries}
+\renewcommand{\cftchappresnum}{Chapter }
+\renewcommand{\cftchapaftersnum}{:}
+\renewcommand{\cftchapnumwidth}{6em}
+
+
+%The rest is just my math commands
+\DeclareMathOperator{\Hess}{H}
+\newcommand{\gr}{\mathfrak{G}}
+\newcommand{\com}{\overline{\mathcal{O}}_{\g,u}}
+\newcommand{\cc}{\mathbf{c}}
+\newcommand{\bpi}{\overline{\pi}}
+\newcommand{\pu}{\psi_{u}}
+\newcommand{\eint}{E^\circ}
+\newcommand{\pint}{\psi^\circ}
+\newcommand{\Apu}{\mathcal{A}_{\g,\pu}}
+\newcommand{\comh}{\mathcal{O}_{\g,u}}
+\newcommand{\HS}{\mathscr{H}}
+\newcommand{\oo}{o}
+\newcommand{\hess}[2]{\Hess_{#1}(#2)}
+\newcommand{\Prt}{\Pi}
+\newcommand{\cpt}{\Prt_{\g}}
+\newcommand{\seq}{\Prt_{\g,\B}}
+\newcommand{\gb}{\overline{\g}}
+\newcommand{\wt}[1]{\widetilde{#1}}
+\newcommand{\Lap}{L}
+\newcommand{\XX}{\mathcal{X}}
+\newcommand{\JJ}{\mathcal{J}}
+\newcommand{\prt}{\pi}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\DO}{\mathbb{D}}
+%\newcommand{\TO}{\mathbb{T}}
+\newcommand{\TT}{\mathscr{T}}
+\newcommand{\BC}{\overline{\mathcal{C}}}
+\newcommand{\VV}{\mathcal{V}(\AA,\eng)}
+\newcommand{\VVu}{\mathcal{V}_{\g,u}}
+\newcommand{\eng}{\varepsilon}
+\newcommand{\Qtr}{\Q^{\mathrm{tr}}}
+\newcommand{\kg}{L_{\g,\B}}
+\newcommand{\GG}{\mathcal{G}}
+\renewcommand{\lg}{L_\g}
+\newcommand{\ef}{\Psi_{\AA}}
+\newcommand{\qg}{\widetilde{\g}}
+\newcommand{\mf}{\Phi_{\AA}^{\eng}}
+\newcommand{\mfu}{\Phi_{\g,u}}
+\newcommand{\efu}{\Psi_{\g,u}}
+\newcommand{\kir}{K}
+\newcommand{\fen}{(\g,u,\eng)}
+\newcommand{\qr}{C}
+\newcommand{\U}{U}
+\newcommand{\eb}{\varepsilon}
+\newcommand{\acon}{C(\eng)}
+\newcommand{\comp}[2]{\g_{#1,#2}}
+\newcommand*{\qeda}{\hfill\ensuremath{\Diamond}}
+\DeclareMathOperator{\Gal}{Gal}
+\newcommand{\ee}[1]{\mathcal{E}_{#1}}
+\newcommand{\orie}{\vec{E}}
+\newcommand{\der}[1]{\frac{\partial}{\partial #1}}
+\newcommand{\g}{\Gamma}
+\renewcommand{\u}{u}
+\newcommand{\op}{\mathcal{O}}
+\newcommand{\vis}{\mathrm{vis}}
+\newcommand{\rs}{\Lambda}
+\newcommand{\cp}[1]{\chi_{#1}}
+\newcommand{\rcp}[1]{\overline{\chi}_{#1}}
+\newcommand{\eh}{e_0}
+\newcommand{\Au}{\mathcal{A}_{\g,u}}
+\newcommand{\Ap}{\mathcal{A}_{\g,\psi}}
+\newcommand{\Ag}{\mathcal{A}_{\g}}
+\renewcommand{\gg}{\Phi}
+\newcommand{\ceil}[1]{\lceil #1 \rceil}
+\newcommand{\gf}{\varphi}
+\newcommand{\BS}{\mathcal{B}(N)}
+\newcommand{\ov}{\overline{V}}
+\renewcommand{\oe}{E_0}
+\newcommand{\vh}{v_0}
+\renewcommand{\l}{\lambda}
+\newcommand{\go}{\g_0}
+\newcommand{\bo}{\bg_0}
+\newcommand{\vo}{V_0}
+\newcommand{\eo}{E_0}
+\renewcommand{\Re}{\operatorname{Re}}
+\renewcommand{\Im}{\operatorname{Im}}
+\newcommand{\xh}{x_0}
+\newcommand{\LF}{\mathcal{L}}
+\newcommand{\bc}{\mathrm{BC}}
+\newcommand{\BB}{\mathcal{B}}
+\newcommand{\DD}{\mathcal{D}}
+\newcommand{\bg}{\Omega}
+\newcommand{\CS}{\mathcal{C}(N)}
+\newcommand{\pcro}{P_1}
+\newcommand{\be}{\partial E}
+\newcommand{\ie}{E^\circ}
+\newcommand{\mg}{\widehat{\g}}
+\newcommand{\gint}{\g^\circ}
+\newcommand{\bd}{u}
+\newcommand{\oi}{\oo^{-1}}
+\newcommand{\vb}{\overline{V}}
+\newcommand{\grad}[2]{\nabla #1 (#2)}
+\newcommand{\inte}{{V^\circ}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\pcp}{\chi_{\g,\B}}
+\newcommand{\me}{\widehat{E}}
+\newcommand{\pb}{P}
+\newcommand{\punc}{P_0}
+\newcommand{\pij}{P_{ij}}
+\newcommand{\sij}{\Sigma_{ij}}
+\newcommand{\scro}{\Sigma_1}
+\newcommand{\sunc}{\Sigma_0}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\CC}{\mathcal{C}}
+\newcommand{\con}{\gamma}
+\newcommand{\ea}{\Lambda}
+\newcommand{\B}{{\partial V}}
+\newcommand{\FF}{\mathbb{F}}
+\newcommand{\KK}{\mathbb{K}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\og}{\overline{\g}}
+\newcommand{\rbc}{\overline{\bc}}
+\newcommand{\nmn}{N_{m,n}}
+\renewcommand{\phi}{\varphi}
+\renewcommand{\AA}{\mathcal{A}}
+\renewcommand{\SS}{\mathcal{S}}
+\newcommand{\PP}{\mathcal{P}}
+\newcommand{\dif}{\partial}
+\newcommand{\kap}{\kappa}
+\newcommand{\II}{\mathcal{I}}
+\DeclareMathOperator{\rk}{rk}
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\os}{OS}
+\newcommand{\sri}{\mathcal{I}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+
+% John's new commands
+\newcommand{\asub}[2]{#1 \textbackslash #2}
+

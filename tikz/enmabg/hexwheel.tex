@@ -1,0 +1,44 @@
+\begin{tikzpicture}[scale=1.8]
+\def\a{3}
+\def\b{1}
+\def\c{0.5}
+
+\coordinate (d) at (2*\a,0);
+\draw[fill=black] (d) circle (2pt);
+
+\foreach \s in {1,2,3,4,5,6}
+{
+	\coordinate (a\s) at (60*\s:1);
+	\coordinate (b\s) at (60*\s:\c);
+	\draw (a\s) -- (b\s);
+	\draw[fill=black] (a\s) circle (2pt);
+	\draw[fill=white] (b\s) circle (2pt);
+	\coordinate (c\s) at ($(2*\a,0)+ \b*(a\s)$);
+	\draw[fill=black] (c\s) circle (2pt);
+	\draw (c\s) -- (d);
+	\coordinate (e\s) at ($(\a,0)+ \b*(a\s)$);
+	\coordinate (f\s) at ($(\a,0)+ \b*(b\s)$);
+	\draw[fill=black] (e\s) circle (2pt);
+	\draw[fill=black] (f\s) circle (2pt);
+};
+\draw (a1) -- (a2) -- (a3) -- (a4) -- (a5) -- (a6) -- (a1);
+\draw (c1) -- (c2) -- (c3) -- (c4) -- (c5) -- (c6) -- (c1);
+
+\draw (e1) -- (e2) -- (e3) -- (e4) -- (e5) -- (e6) -- (e1);
+\draw (f1) -- (f2) -- (f3) -- (f4) -- (f5) -- (f6) -- (f1);
+\draw (e1) -- (f1);
+\draw (e2) -- (f2);
+\draw (e3) -- (f3);
+\draw (e4) -- (f4);
+\draw (e5) -- (f5);
+\draw (e6) -- (f6);
+\draw (f1) -- (f3);
+\draw (f1) -- (f4);
+\draw (f1) -- (f5);
+\draw (f2) -- (f4);
+\draw (f2) -- (f5);
+\draw (f2) -- (f6);
+\draw (f3) -- (f5);
+\draw (f3) -- (f6);
+\draw (f4) -- (f6);
+\end{tikzpicture}

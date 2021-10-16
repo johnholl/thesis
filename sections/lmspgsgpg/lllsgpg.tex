@@ -1,0 +1,232 @@
+\section{A Generalization to Stochastic Games and Convergence in SGPGs}
+
+This section will generalize log-linear learning to the stochastic setting and show that, in the case of stochastic global potential games, the stochastically stable states of generalized log-linear learning are precisely those joint behaviors that maximize the global potential function. 
+
+Generalized log-linear learning proceeds as follows. At each timestep $t$, players select pure behaviors $\pi^i$. The players update their behavior choices as follows. At time $t$, a player $i$ and a state $s$ are selected uniformly at random. Player $i$ will generate a distribution $x^i_s$. All other players select the same behavior as they did at the previous timestep, i.e. $\pi_t^j = \pi_{t-1}^j$ for players $j \neq i$. In contrast, player $i$ will play by sampling from the distribution
+
+\begin{comment}
+$$
+x^i_s(a) = \dfrac{e^{Q^i_{\pi}(s, a, a_{t-1}^{-i})}/\tau}{\sum_{b \in \AA^i} e^{Q^i_{\pi}(s, b, a_{t-1}^{-i})}/\tau}
+$$
+
+where $a_{t-1}^{-i}$ is the action played in state $s$ at time $t-1$ by all players except player $i$. $x^i_s(a)$ is the probability of selecting action $a$ in state $s$ under the distribution $x^i_s$, and $\tau$ is a {\em temperature parameter}. 
+
+It is important to note that this learning method is not payoff-based. It requires that players are able to compute their $Q$-values in order to update their strategy.
+
+
+\begin{lem}
+Generalized log-linear is a regular perturbed Markov process where the resistance of any feasible transition $\pi \rightarrow \tau = (a^i_s, \pi^{-i})$ is
+$$
+R(\pi \rightarrow \tau) = \max_{a^i_* \in \AA^i} Q^i_{\pi}(a^i_*, \pi^{-i}) - Q^i_{\pi}(s, \tau)
+$$
+\end{lem}
+
+\begin{proof}
+The unperturbed process behaves as follows for each timestep $t > 0$. Choose a player $i$ and state $s$, both uniformly at random. Change player $i$'s action in that timestep to an element of $a_* \in \argmax Q^i_{\pi_{t-1}}(s, a, \pi^{-i}_{s})$. Keep the behavior of player $i$ in all other states unchanged, and keep the behaviors of all other players the same.
+
+Under the perturbed process $P^{\epsilon}$, the probability of transitioning from $\pi$ to $\tau$ is
+
+$$
+P^{\epsilon}_{\pi \rightarrow \tau} = \dfrac{1}{n} \dfrac{1}{|\SS|} \dfrac{\epsilon^{-Q^i_{\pi}(s, a^i_s, \pi^{-i}_s})}{\sum_{b \in \AA^i} \epsilon^{-Q^i_{\pi}(s, b, \pi^{-i}_s})}
+$$
+
+Let $W_i(s, \pi) = \max_{a^i_* \in \AA^i} Q^i_{\pi}(a^i_*, \pi^{-i})$. Multiply the numerator and denominator by $\epsilon^{W_i(s, \pi)}$ yields
+
+$$
+P^{\epsilon}_{\pi \rightarrow \tau} = \dfrac{1}{n} \dfrac{1}{|\SS|} \dfrac{\epsilon^{W_i(s, \pi)-Q^i_{\pi}(s, a^i_s, \pi^{-i}_s})}{\sum_{b \in \AA^i} \epsilon^{W_i(s, \pi)-Q^i_{\pi}(s, b, \pi^{-i}_s})}
+$$
+
+So then,
+
+$$
+\lim_{\epsilon \rightarrow 0^+} \dfrac{P^{\epsilon}_{\pi \rightarrow \tau}}{\epsilon^{W_i(s, \pi)-Q^i_{\pi}(s, a^i_s, \pi^{-i}_s})} \\
+= \lim_{\epsilon \rightarrow 0^+} \dfrac{1}{n |\SS|} \dfrac{1}{\sum_{b \in \AA^i} \epsilon^{W_i(s, \pi)-Q^i_{\pi}(s, b, \pi^{-i}_s})}
+$$
+
+The summands in the denominator will approach either 0 or 1 depending on if $b$ is in $\argmax Q^i_{\pi_{t-1}}(s, a, \pi^{-i}_{s})$. So this limit is equal to
+
+$$
+\dfrac{1}{n |\SS| |\argmax Q^i_{\pi_{t-1}}(s, a, \pi^{-i}_{s})|}
+$$
+
+Therefore generalized log-linear learning is a regular perturbed Markov process with resistances
+$$
+R(\pi \rightarrow \tau) = \max_{a^i_* \in \AA^i} Q^i_{\pi}(a^i_*, \pi^{-i}) - Q^i_{\pi}(s, \tau)
+$$
+\end{proof}
+
+*Should define feasible paths here*
+
+
+\begin{lem}
+Consider any finite $n$-player SGPG with potential function $\Phi: \AA \rightarrow \R$ where all players adhere to log-linear learning. For any feasible action path
+$$
+\PP = \{\pi_0 \rightarrow \pi_1 \rightarrow \cdots \rightarrow \pi_m\}
+$$
+
+and its reverse path
+
+$$
+\PP^R = \{\pi_m \rightarrow \pi_{m-1} \rightarrow \cdots \rightarrow \pi_0\}
+$$
+
+the difference in the total resistance across the paths is
+
+$$
+R(\PP) - R(\PP^R) = \phi(\pi_0) - \phi(\pi_m)
+$$
+\end{lem}
+
+\begin{proof}
+Consider a single edge $\pi_k \rightarrow \pi_{k+1}$ in the path and its reverse $\pi_{k+1} \rightarrow \pi_k$. By the previous lemma we have
+
+$$
+R(\pi_k \rightarrow \pi_{k+1}) = W_i(s, \pi_k) - Q^i_{\pi_k}(s, a^i_{k+1}, (\pi^{-i}_k)_s) \\
+R(\pi_{k+1} \rightarrow \pi_{k}) = W_i(s, \pi_{k+1}) - Q^i_{\pi_{k+1}}(s, a^i_{k}, (\pi^{-i}_{k+1})_s) 
+$$
+
+Since $\pi_k$ and $\pi_{k+1}$ only differ by player $i$'s action in state $s$ we have that:
+
+$$
+W_i(s, \pi_{k+1}) = W_i(s, \pi_{k}) \\
+Q^i_{\pi_{k+1}}(\cdot) = Q^i_{\pi_{k}}(\cdot) \\
+(\pi^{-i}_{k+1})_s = (\pi^{-i}_{k})_s
+$$
+
+So then
+
+$$
+R(\PP) - R(\PP^R) = Q^i_{\pi_k}(s, a_k^i, (\pi^{-i}_k)_s) - Q^i_{\pi_k}(s, a_{k+1}^i, (\pi^{-i}_k)_s) = \Phi(s, \pi_k) - \Phi(s, \pi_{k+1})
+$$
+\end{proof}
+\end{comment}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$$
+x^i_s(a) = \dfrac{e^{V^i_{\asub{\pi_{t-1}}{a}}(s_0)/\tau}}{\sum_{b \in \AA^i} e^{V^i_{\asub{\pi_{t-1}}{b}}(s_0)/\tau} }
+$$
+
+where $\pi_{t-1}$ is the joint behavior played at time $t-1$ and $s_0$ is the initial state of the stochastic game. $x^i_s(a)$ is the probability of selecting action $a$ in state $s$ under the distribution $x^i_s$, and $\tau$ is a {\em temperature parameter}. 
+
+It is important to note that this learning method is not payoff-based. It requires that players are able to compute their state values in order to update their strategy.
+
+
+\begin{lem}
+Generalized log-linear is a regular perturbed Markov process where the resistance of any feasible transition $\pi \rightarrow \tau = (a^i_s, \pi^{-i})$ is
+$$
+R(\pi \rightarrow \tau) = \max_{a^i_* \in \AA^i} V^i_{\asub{\pi}{a^i_*}}(s_0) - V^i_{\tau}(s_0)
+$$
+\end{lem}
+
+\begin{proof}
+The unperturbed process behaves as follows for each timestep $t > 0$. Choose a player $i$ and state $s$, both uniformly at random. Change player $i$'s action in that timestep to an element of $a_* \in \argmax_a {V^i_{\asub{\pi_{t-1}}{a}}(s_0)}$. Keep the behavior of player $i$ in all other states unchanged, and keep the behaviors of all other players the same.
+
+Let $\epsilon = e^{-1/\tau}$. Under the perturbed process $P^{\epsilon}$, the probability of transitioning from $\pi$ to $\tau$ is
+
+$$
+P^{\epsilon}_{\pi \rightarrow \tau} = \dfrac{1}{n} \dfrac{1}{|\SS|} \dfrac{\epsilon^{-V^i_{\asub{\pi}{a^i_s}}(s_0)}}{\sum_{b \in \AA^i} \epsilon^{-V^i_{\asub{\pi}{b}}(s_0)}}
+$$
+
+Let $W_i(s, \pi) = \max_{a \in \AA^i} V^i_{\asub{\pi}{a}}(s_0)$. Multiply the numerator and denominator by $\epsilon^{W_i(s, \pi)}$ yields
+
+$$
+P^{\epsilon}_{\pi \rightarrow \tau} = \dfrac{1}{n} \dfrac{1}{|\SS|} \dfrac{\epsilon^{W_i(s, \pi)-V^i_{\asub{\pi}{a}}(s_0)}}{\sum_{b \in \AA^i} \epsilon^{W_i(s, \pi)-V^i_{\asub{\pi}{a}}(s_0)}}
+$$
+
+So then,
+
+$$
+\lim_{\epsilon \rightarrow 0^+} \dfrac{P^{\epsilon}_{\pi \rightarrow \tau}}{\epsilon^{W_i(s, \pi)-V^i_{\asub{\pi}{a}}(s_0)}} \\
+= \lim_{\epsilon \rightarrow 0^+} \dfrac{1}{n |\SS|} \dfrac{1}{\sum_{b \in \AA^i} \epsilon^{W_i(s, \pi)-V^i_{\asub{\pi}{a}}(s_0)}}
+$$
+
+The summands in the denominator will approach either 0 or 1 depending on if $b$ is in $\argmax V^i_{\asub{\pi}{a}}(s_0)$. So this limit is equal to
+
+$$
+\dfrac{1}{n |\SS| |\argmax V^i_{\asub{pi}{a}}(s_0)|}
+$$
+
+Therefore generalized log-linear learning is a regular perturbed Markov process with resistances
+$$
+R(\pi \rightarrow \tau) = \max_{a^i_* \in \AA^i} V^i_{\asub{\pi}{a^i_*}}(s_0) - V^i_{\tau}(s_0)
+$$
+\end{proof}
+
+In order to relate the graph-theoretic notion of stochastic potential to the stochastic game-theoretic notion of global potential we must define feasible paths and reverse paths. A feasible path is a sequence of joint behaviors $\PP = \{\pi_0 \rightarrow \pi_1 \rightarrow \cdots \rightarrow \pi_m\}$ such that two adjacent behaviors differ by the action of a single player in a single state. The resistance $R(\PP)$ of a path is the sum of edge resistances
+
+$$
+R(\PP) = \sum_{i=1}^n R(\pi_{i-1} \rightarrow \pi_i)
+$$
+
+The reverse path consists of the same joint behaviors, but with arrows travelling in the opposite direction. We can relate path resistances with changes in global potential with the following lemma.
+
+
+\begin{lem}
+Consider any finite $n$-player SGPG with potential function $\Phi: \AA \rightarrow \R$ where all players adhere to log-linear learning. For any feasible action path
+$$
+\PP = \{\pi_0 \rightarrow \pi_1 \rightarrow \cdots \rightarrow \pi_m\}
+$$
+
+and its reverse path
+
+$$
+\PP^R = \{\pi_m \rightarrow \pi_{m-1} \rightarrow \cdots \rightarrow \pi_0\}
+$$
+
+the difference in the total resistance across the paths is
+
+$$
+R(\PP) - R(\PP^R) = \phi(s_0, \pi_0) - \phi(s_0, \pi_m)
+$$
+\end{lem}
+
+\begin{proof}
+Consider a single edge $\pi_k \rightarrow \pi_{k+1}$ in the path and its reverse $\pi_{k+1} \rightarrow \pi_k$. By the previous lemma we have
+
+$$
+R(\pi_k \rightarrow \pi_{k+1}) = W_i(s, \pi_k) - V^i_{\pi_{k+1}}(s_0) \\
+R(\pi_{k+1} \rightarrow \pi_{k}) = W_i(s, \pi_{k+1}) - V^i_{\pi_k}(s_0)
+$$
+
+Since $\pi_k$ and $\pi_{k+1}$ only differ by player $i$'s action in state $s$ we have that:
+
+$$
+W_i(s, \pi_{k+1}) = W_i(s, \pi_{k}) \\
+$$
+
+So then
+
+$$
+R(\PP) - R(\PP^R) = V^i_{\pi_k}(s_0) - V^i_{\pi_{k+1}}(s_0) = \Phi(s_0, \pi_k) - \Phi(s_0, \pi_{k+1})
+$$
+
+Adding these differences up over all pairs in the path gives the desired result.
+\end{proof}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{prop}
+Consider any finite $n$-player GSPG with potential function $\Phi: \AA \rightarrow \R$ where all players adhere to log-linear learning. The stochastically stable states are the set of potential maximizers, i.e., $\{ \pi : \Phi(\pi) = \max_{\pi_*} \Phi(\pi_*)  \}$
+\end{prop}
+
+\begin{proof}
+Let $\pi$ be a behavior with minimum stochastic potential, and let $G$ be a $\pi$-tree that realizes this stochastic potential. Let $\pi_*$ be a behavior that minimizes $\Phi(s_0, \cdot)$.
+
+Within the graph $G$ there is a path $\PP$ beginning at $\pi_*$ and ending at $\pi$. Let $G_*$ be the graph obtained by removing $\PP$ from $G$ and replacing it with $\PP^R$. $G_*$ is a tree rooted at $\pi_*$. By the previous lemma,
+
+$$
+R(G) - R(G_*) = \Phi(s_0, \pi) - \Phi(s_0, \pi_*)
+$$
+
+Since $\pi$ has minimum stochastic potential, the right hand side of the equation is greater than or equal to zero. Hence
+
+$$
+\Phi(s_0, \pi) \leq \Phi(s_0, \pi_*)
+$$
+
+and so $\pi$ must also minimize $\Phi(s_0, *)$.
+\end{proof}

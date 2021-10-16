@@ -1,0 +1,64 @@
+\begin{tikzpicture}[scale=2.5]
+\draw[opacity=0.4] (0,0) circle (1);
+\foreach \s in {1,2,3,4,5}
+{
+	\coordinate (a\s) at ($({54+360*\s/5}:0.6)$);
+	\coordinate (b\s) at ($({-18+72*(\s+0.5)}:1)$);
+	\coordinate (c\s) at ({-18+72*\s}:1);
+	\coordinate (d\s) at ({18+72*\s}:0.67);
+};
+\draw (a1) -- (a2) -- (a3) -- (a4) -- (a5) -- (a1);
+\draw (a3) -- (b4) -- (a4) -- (b5) -- (a5) -- (b1) -- (a1) -- (b2) -- (a2) -- (b3) -- (a3);
+
+\coordinate (e) at (0,0);
+\draw[loosely dashed] (e)--(d1);
+\draw[loosely dashed] (e)--(d2);
+\draw[loosely dashed] (e)--(d3);
+\draw[loosely dashed] (e)--(d4);
+\draw[loosely dashed] (e)--(d5);
+\draw[loosely dashed] (c1)--(d1)--(c2)--(d2)--(c3) --(d3)--(c4)--(d4)--(c5)--(d5)--(c1);
+
+\foreach \s in {1,2,3,4,5}
+{
+	\draw[fill=black] (a\s) circle (1.2pt);
+	\draw[fill=black] (b\s) circle (1.2pt);
+	\draw[fill=white] (c\s) circle (1.2pt);
+	\draw[fill=white] (d\s) circle (1.2pt);
+};
+\draw[fill=white] (e) circle (1.2pt);
+
+\def\a{2.75}
+\draw[opacity=0.4] (\a,0) circle (1);
+\foreach \s in {1,2,3,4,5}
+{
+	\coordinate (f\s) at ($(\a,0)+({54+360*\s/5}:0.6)$);
+	\coordinate (g\s) at ($(\a,0)+({-18+72*(\s+0.5)}:1)$);
+	\draw[fill=black] (g\s) circle (1.2pt);
+	\coordinate (h\s) at ($(\a,0)+({-18+72*\s}:1)$);
+	\coordinate (i\s) at ($(\a,0)+({18+72*\s}:0.67)$);
+};
+\draw (f1) -- (f2) -- (f3) -- (f4) -- (f5) -- (f1);
+\draw (f3) -- (g4) -- (f4) -- (g5) -- (f5) -- (g1) -- (f1) -- (g2) -- (f2) -- (g3) -- (f3);
+
+\coordinate (j) at (\a,0);
+\draw[loosely dashed] (j)--(i1);
+\draw[loosely dashed] (j)--(i2);
+\draw[loosely dashed] (j)--(i3);
+\draw[loosely dashed] (j)--(i4);
+\draw[loosely dashed] (j)--(i5);
+\draw[loosely dashed] (h1)--(i1)--(h2);
+\draw[line width=0.5mm,cyan] (h2)--(i2)--(h3) --(i3)--(h4)--(i4)--(h5)--(i5)--(h1);
+
+\foreach \s in {1,2,3,4,5}
+{
+	\draw[fill=black] (f\s) circle (1.2pt);
+	\draw[fill=black] (g\s) circle (1.2pt);
+	\draw[line width=0.5mm,cyan,fill=white] (h\s) circle (1.2pt);
+};
+\foreach \s in {2,3,4,5}
+{
+	\draw[line width=0.5mm,cyan,fill=white] (i\s) circle (1.2pt);
+};
+\draw[fill=white] (i1) circle (1.2pt);
+\draw[fill=white] (j) circle (1.2pt);
+\end{tikzpicture}

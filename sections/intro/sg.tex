@@ -1,0 +1,59 @@
+\section{Stochastic Games}
+
+In this section we will introduce the definition of a stochastic game. A stochastic game is like an MDP, except instead of a single agent interacting with an environment there are multiple agents. To more closely match game theoretic language, we will call these agents {\em players}.
+
+\begin{mydef}
+An $n$-player stochastic game $G$ consists of a state space $\SS$, state-dependent action sets $\AA^i_s$ for each player, and games $\{G_s\}_{s \in \SS}$ with utilities $u^i_s(a)$, called ``stage games'', and transition probabilities $P_{ss'}(x)$ for each state pair $s, s' \in \SS$ and joint strategy $x$. 
+
+The players begin the game by entering a state determined by an initial probability distribution $\mu_0$. 
+
+The game $G$ progresses by agents simultaneously selecting actions $a^i_s \in \AA^i$ in state $s$. Player $i$ receives utility $u^i_s(a_s = \{a^1_s, \ldots, a^n_s\})$ and the state transitions to $s'$ according to the transition probability distribution. 
+\end{mydef}
+
+In this work we will always assume that $| \SS |$ is finite. We will also assume that the action sets are finite and shared across all states, ie $\AA^i_s = \AA^i_{s'}$ for all states $s,s'$. In this case we will simply refer to the action set as $\AA^i$.
+
+The stochastic game framework lies at the intersection of game theory and control theory. By introducing a state space and transition dynamics it extends the normal-form game from game theory. Specifically, a normal-form game can be viewed as a stochastic game with one state and trivial transition dynamics. On the other hand, it extends the Markov decision process (MDP) framework to the multi-agent setting. An MDP is a stochastic game where $n=1$. 
+
+It will also be useful to restrict the form of stochastic games for later analysis in the paper. For this purpose we introduce the following definition:
+
+\begin{mydef}
+A stochastic game $G$ is said to be ``fixed finite-time" If the underlying MDP (that is, considering the game as an MDP with 1 agent representing all players) is a fixed finite-time MDP. 
+\end{mydef}
+
+A different way of stating this is that there exists a time $T$ and a partition of the state space $\SS = \SS_1 \cup \ldots \cup \SS_T$ such that for $s_i \in \SS_i$ and $s_j \in \SS_j$ we have
+
+$$
+P_{s_is_j} = 0
+$$
+
+if $j \neq i + 1$.
+
+
+In normal-form games, each player chooses a player strategy. In stochastic games, a player must choose a strategy in every state. We refer to such a choice as a {\em behavior}, and denote it by $\pi^i \in \times_{s \in \SS} \AA^i$. The specific strategy employed in state $s$ will be denoted by $\pi^i_s$. A {\em joint behavior} is a collection of behaviors for all players $\pi = (\pi^i, \ldots, \pi^n)$. It is useful to introduce notation for joint behaviors that differ by one or two players' behaviors. Let $\tau^i$ be a behavior for player $i$. We denote the joint behavior $(\pi^1, \ldots, \pi^{i-1}, \tau^i, \pi^{i+1}, \ldots \pi^n)$ by $\asub{\pi}{\tau^i}$. Similarly, if we change two players behaviors, we denote the joint strategy by $\asub{\pi}{\tau^i\tau^j}$. Finally, we will often modify a joint behavior $\pi$ by changing a player's strategy in a single state $s$ from pure strategy $a^i_s$ to $b^i_s$. We will denote the modified joint behavior by $\asub{\pi}{b^i_s}$ or $\asub{\pi}{b^i}$ when the particular state is clear.
+
+In normal-form games, players wish to maximize their utilities. In stochastic games, players wish to maximize their returns. A return is simply the sum of utilities from the stage games the player encounters, and so it is analogous to the notion of return in MDPs. In analogy with the reinforcement learning literature, we let $V^i_{\pi}(s)$ denote the expected return for player $i$ starting from state $s$ when players employ the joint behavior $\pi$. We let $Q^i_{\pi}(s, a)$ denote the expected return for player $i$ starting from state $s$ when they first take action $a$ in state $s$ while other players play $\pi_s$, and then all players play $\pi$ in subsequent states.
+
+As in normal form games, stochastic games have a notion of Nash equilibrium. A joint behavior is in Nash equilibrium if no individual player can increase their expected return by changing their strategy. All stochastic games admit at least one Nash equilibrium, although this fact is nontrivial \cite{filar2012competitive, shapley1953stochastic}.
+
+At this point we have introduced three distinct models of environment and agent (player) interaction: MDPs, normal form games, and stochastic games. The differences in language between the three models are summarized in \ref{fig:languagediff}.
+
+\vspace{.5in}
+
+\begin{figure}
+\begin{tabular}{|c|c|c|}
+    \hline
+     MDP &  normal form game & stochastic game \\
+    \hline
+     agent &  player & player \\
+     reward &  utility & utility (in stage game) \\
+     return &  -- & return \\
+     -- &  (player) strategy & (player) behavior \\
+     policy &  -- & joint behavior \\
+     action &  joint strategy & joint strategy (in stage game) \\
+     optimal policy &  Nash equilibrium & Nash equilibrium \\
+     deterministic &  pure & pure \\
+    \hline
+\end{tabular}
+\caption{Language differences in MDPs, normal form games, and stochastic games.}
+\label{fig:languagediff}
+\end{figure}

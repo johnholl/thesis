@@ -1,0 +1,30 @@
+	\begin{tikzpicture}
+	\def\c{1.4}
+	\coordinate (a1) at (-1,-1);
+	\coordinate (a2) at (1,-1);
+	\coordinate (a3) at (1,1);
+	\coordinate (a4) at (-1,1);
+	\coordinate (a5) at (0,0);
+	\draw (a1) -- (a2) -- (a3) -- (a4) -- (a1);
+	\draw (a1) -- (a3);
+	\draw (a2) -- (a4);
+	\draw[fill=black] (a1) circle (3pt);
+	\draw[fill=black] (a2) circle (3pt);
+	\draw[fill=black] (a3) circle (3pt);
+	\draw[fill=black] (a4) circle (3pt);
+	\draw[fill=black] (a5) circle (3pt);
+	
+	\def\a{-5}
+	\coordinate (b1) at (-1+\a,-1);
+	\coordinate (b2) at (1+\a,-1);
+	\coordinate (b3) at (1+\a,1);
+	\coordinate (b4) at (-1+\a,1);
+	\coordinate (b5) at (\a,0);
+	\draw (b3) -- (b4) -- (b1) -- (b2);
+	\draw (b1) -- (b5) -- (b4);
+	\draw[fill=black] (b1) circle (3pt);
+	\draw[fill=white] (b2) circle (3pt);
+	\draw[fill=white] (b3) circle (3pt);
+	\draw[fill=black] (b4) circle (3pt);
+	\draw[fill=white] (b5) circle (3pt);
+	\end{tikzpicture}

@@ -1,0 +1,123 @@
+\pagenumbering{roman}
+
+\addcontentsline{toc}{chapter}{Front Matter}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
+
+\vspace*{1.5in}
+\begin{center}
+	{\bf Learning Dynamics and Reinforcement in Stochastic Games}
+
+\vspace{2mm}
+by
+
+\vspace{5mm}
+John Edward Holler
+
+\vspace{1.25in}
+A dissertation submitted in partial fulfillment
+
+of the requirements for the degree of
+
+Doctor of Philosophy
+
+(Mathematics)
+
+in The University of Michigan
+
+2020
+\end{center}
+
+\vspace{1.25in}
+\noindent Doctoral Committee:
+
+\vspace{.15 in}
+
+Professor Martin Strauss, Chair
+
+Professor David Leslie
+
+Professor Satinder Singh
+
+Professor Karen Smith
+
+
+
+\thispagestyle{empty}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{gobble}
+\pagenumbering{roman}
+\newgeometry{top=2in}
+\thispagestyle{empty}
+
+\vspace*{2in}
+\begin{center}
+	John Edward Holler
+	
+	\vspace{5mm}
+	johnholl@umich.edu
+	
+	\vspace{5mm}
+	ORCID iD: 0000-0002-0071-5204
+	
+	\vspace{1cm}
+	\copyright\, John Holler 2020
+\end{center}
+\restoregeometry
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newgeometry{top=2in}
+\section*{Dedication}
+\addcontentsline{toc}{section}{Dedication}
+
+
+\begin{center}
+This dissertation is dedicated to Virginia Kunisch.
+\end{center}
+\restoregeometry
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\newgeometry{top=2in}
+\section*{Acknowledgments}
+\addcontentsline{toc}{section}{Acknowledgements}
+\onehalfspacing
+I would like to thank the following people for their support and friendship. Names appear in order of appearance in my life. Karen Holler, Ed Holler, Kristen Holler, Haley Hofbauer, Sam Gross, Alex Gross, Mishaal Muqaddam, Karen Smith, Igor Kriz, Robert Lutz, Joseph Kraisler, Satinder Singh, Junhyuk Oh, Janarthanan R., Tony Qin, Jieping Ji, Chenxi Wang, Xiaochen Tang, Yan Jiao, Martin Strauss, and David Leslie. You all have helped me immensely in this journey, and I am forever grateful.
+\restoregeometry
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tableofcontents
+% \listoffigures
+{%
+\let\oldnumberline\numberline%
+\renewcommand{\numberline}{\figurename~\oldnumberline}%
+\newpage
+\addcontentsline{toc}{section}{List of Figures}
+\begin{center}
+\listoffigures%
+\end{center}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newgeometry{top=2in}
+\section*{Abstract}
+\addcontentsline{toc}{section}{Abstract}
+\onehalfspacing
+The theory of Reinforcement Learning provides learning algorithms that are guaranteed to converge to optimal behavior in single-agent learning environments. While these algorithms often do not scale well to large problems without modification, a vast amount of recent research has combined them with function approximators with remarkable success in a diverse range of large-scale and complex problems. Motivated by this success in single-agent learning environments, the first half of this work aims to study convergent learning algorithms in multi-agent environments. The theory of multi-agent learning is itself a rich subject, however classically it has confined itself to learning in iterated games where there are no state dynamics. In contrast, this work examines learning in stochastic games, where agents play one another in a temporally extended game that has nontrivial state dynamics. We do so by first defining two classes of stochastic games: \em{Stochastic Potential Games (SPGs)} and \em{Global Stochastic Potential Games (GSPGs)}. We show that both games admit pure Nash equilibria, as well as further refinements of their equilibrium sets. We discuss possible applications of these games in the context of congestion and traffic routing scenarios. Finally, we define learning algorithms that
+
+\vspace{.2in}
+
+\begin{enumerate}
+    \item converge to pure Nash equilibria and
+    \item converge to further refinements of Nash equilibria.
+\end{enumerate}
+
+\vspace{.2in}
+
+In the final chapter we combine a simple type of multi-agent learning - individual Q-learning - with neural networks in order to solve a large scale vehicle routing and assignment problem. Individual Q-learning is a heuristic learning algorithm that, even in small multi-agent problems, does not provide convergence guarantees. Nonetheless, we observe good performance of this algorithm in this setting.
+
+\restoregeometry

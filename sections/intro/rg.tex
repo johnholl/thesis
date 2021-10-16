@@ -1,0 +1,110 @@
+\section{Normal Form Games}
+
+Normal form games are one of the foundational models of strategic interaction that is studied in game theory. A finite n-player normal form game consists of a set of players $\{1, 2, \ldots, n \}$. Each player $i$ has a finite set of actions $\AA^i$. We define the set of joint actions to be
+
+\begin{equation}
+    \AA = \times_i \AA^i
+\label{eq:jointaction}
+\end{equation}
+
+In addition to an action set, each player is endowed with a utility function
+
+\begin{equation}
+    u^i : \AA \rightarrow \mathbb{R}
+\label{eq:utility}
+\end{equation}
+
+A player's utility serves to specify their goal within the strategic confines of the game. A player wishes to maximize their utility, yet the utility is determined by both action of the player {\em and} the actions of other players. 
+
+Normal form games can be represented as tensors, and the special case of 2 player games can be represented as a bimatrix. For example, as a bimatrix the standard prisoner's dilemma \cite{kreps1982rational} is given by
+
+\begin{center}
+\begin{equation}
+
+   \begin{blockarray}{ccc}
+ & c & d \\
+\begin{block}{c(cc)}
+  c & -1,-1 & -3,0 \\
+  d & 0,-3 & -2,-2 \\
+\end{block}
+\end{blockarray} 
+
+\caption{Utility structure in the Prisoner's dilemma}
+\label{eq:prisdil}
+\end{equation}
+\end{center}
+
+The data of the game may be read directly from the bimatrix. For example, the utility of player 1 when player one cooperates ($c$) and player two defects ($d$) is the first entry in the $(c,d)$ position of the matrix.
+
+In Chapters 2 and 3 there will be examples of games in which there are 3 players. This can be represented by a collection of trimatrices, one for each action of the third player. For example, in the 3-player matching pennies game, player one wins by selecting the same action as player two, player two wins by selecting a different action from player one, and player 3 bets on the winner and is rewarded if they are correct. This is represented in the following two trimatrices:
+
+\begin{equation}
+
+   \begin{blockarray}{ccc}
+   bet 1 \\
+ & h & t \\
+\begin{block}{c(cc)}
+  h & 1,-1,1 & -1,1,-1 \\
+  t & -1,1,-1 & 1,-1,1 \\
+\end{block}
+\end{blockarray} 
+
+\vspace{.2in}
+
+   \begin{blockarray}{ccc}
+   bet 2 \\
+ & h & t \\
+\begin{block}{c(cc)}
+  h & 1,-1,-1 & -1,1,1 \\
+  t & -1,1,1 & 1,-1,-1 \\
+\end{block}
+\end{blockarray} 
+\label{eq:matchpen3}
+
+\end{equation}
+
+The first trimatrix gives the utilities that each player receives when player three bets on player one. The second trimatrix gives the utilities if player 3 bets on player two.
+
+Game theory seeks to understand the kinds of strategies one would expect to arise when rational agents engage in a given game. The most fundamental notion of equilibrium behavior is that of Nash equilibrium. Before we explain this concept, we introduce notation and vocabulary related to actions within a game.
+
+
+Let $\Delta \AA^i$ denote the simplex of discrete probability distributions over $\AA^i$. We will refer to an element $x^i$ of this distribution as a player strategy, and a {\em pure} strategy if the support of $x^i$ is a single action $a^i$. Otherwise we call the strategy {\em mixed}. By a small abuse of notation we will call such pure strategies by their action name $a^i$. We may linearly extend the domain of each utility function to the domain $\times_{j \in \{1, \ldots, n\}}  \AA^j$, and we will generally think of the $u^i$'s as having this enlarged domain.
+
+A list of strategies, one per player: $x = (x^1, \ldots, x^n)$ is called a {\em joint strategy}. Often, it is useful to consider two joint strategies that differ by one or two players' actions. For notational convenience, we define the joint action $(x^1, \ldots , x^{i-1}, y^i, x^{i+1}, \ldots, x^n)$ by $\asub{x}{y^i}$ and the joint action $(x^1, \ldots , x^{i-1}, y^i, x^{i+1}, \ldots, x^{j-1}, y^j, x^{j+1}, \ldots,  x^n)$ by $\asub{x}{y^iy^j}$. A joint pure strategy is one where all players' strategies are pure. In this case we will often use $a$ and $b$ rather than $x$ and $y$.
+
+
+\begin{mydef}
+For a game $G = (\AA^i, u^i)$ and player $i$, a strategy $x^i \in \Delta \AA^i$ is said to be a best response to $\{x^j\}_{j \neq i}$ if
+$$
+u^i(x^1, \ldots, x^i, \ldots, x^n) \geq u^i(x^1, \ldots, y^i, \ldots x^n)
+$$
+
+for any $y^i \in \AA^i$.
+
+\end{mydef}
+
+
+We now introduce the important concept of Nash equilibrium. Simply put, a Nash equilibrium is a joint strategy such that no player can unilaterally deviate and receive a larger utility.
+
+\begin{mydef}
+A Nash equilibrium is a set of strategies $x^i \in \Delta \AA^i$ such that for all $i$, the player strategy $x^i$ is a best response to $\{x^j\}_{j \neq i}$
+\end{mydef}
+
+A {\em pure} Nash equilibrium is a Nash equilibrium such that each player strategy is a pure strategy. Otherwise we call the equilibrium {\em mixed}. A priori, a game need not have a pure Nash equilibrium. For instance, the following is the original 2-player matching pennies game
+
+\begin{equation}
+
+\begin{blockarray}{ccc}
+ & h & t \\
+\begin{block}{c(cc)}
+  h & 1,-1 & -1,1 \\
+  t & -1,1 & 1,-1 \\
+\end{block}
+\end{blockarray} 
+
+\label{matchpen2}
+\end{equation}
+
+As we can see, no pure joint strategy will have players in simultaneous best response. However, if both player selects their action uniformly at random, then their behavior will be in equilibrium. In his original on the subject, Nash shows that all finite games contain at least one Nash equilibrium. 
+
+There are a variety of other equilibrium and dominance concepts that have been devised, however these are outside of the scope of the present work. 

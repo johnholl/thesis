@@ -1,0 +1,123 @@
+\subsection{Log-linear learning in SPGs}
+
+\subsection{Generalized Log-Linear Learning does not converge in Stochastic Potential Games}
+
+The first question we need to answer when addressing log-linear learning for SPGs is one of goals. In repeated potential games, log-linear learning is attractive as a method because it guarantees potential maximizing behavior. Potential maximizers are a subset of pure Nash equilibria in potential games, and therefore log-linear learning exhibits an "equilibrium selection" property, in that it selects Nash equilibria with an additional restriction (namely those that maximize potential). When we extended log-linear learning to SGPGs there was still a clear goal: define a learning algorithm whose stationary distribution is supported on Nash equilibria that maximize the global potential function. Generalized log-linear learning selects for these more restrictive Nash equilibria in SGPGs. In contrast, an SPG does not necessarily have a global potential function, and so first we need to describe the kind of equilibria we would like log-linear learning to select for in SPGs. The kind of equilibria we are interested in are {\em simultaneously potential maximizing}.
+
+\begin{mydef}
+Let $\Gamma$ be an SPG. A joint behavior $\pi$ is simultaneously potential maximizing if for all states $s$, the joint strategy $\pi_s$ is a potential maximizing strategy in the continuation stage game $G_s(V_{\pi})$. 
+\end{mydef}
+
+Recall that for an SPG $\Gamma$, any continuation game $G_s(c)$ is a potential game. As a result we are able to talk about potential maximizing strategies for $G_s(V_{\pi})$. 
+
+
+We've remedied one issue that the lack of global potential presents us. However, there is a deeper issue: without a global potential function we do not have a global way to characterize resistances in log-linear learning for SPGs. As a result, a "naive" attempt to use log-linear learning in SPGs will fail. We will illustrate this with an example of an SPG that does not converge under a naive log-linear learning rule. Like all of our previous discussions of SPGs, we will be in the finite-time setting.
+
+{\bf Naive log-linear learning}. At each timestep $t$ all players select actions $a^i_s(t)$ in all states simultaneously. Let $a_s(t)$ denote the joint action taken in state $s$ at time $t$, and $a(t)$ denote the entire behavior at time $t$. At time $t$, a player $i$ and state $s$ are selected uniformly at random. Player $i$ selects an action according to the distribution
+
+$$
+pr(a^i) = \dfrac{e^{Q^i_{a(t-1)}(s, a^i, a^{-i}_s(t-1))/\tau}}{\sum_{b^i}e^{Q^i_{a(t-1)}(s, b^i, a^{-i}_s(t-1))/\tau}}
+$$
+
+where $\tau$ is a temperature parameter. The action taken in all other states is the same as at time $t-1$, and the action taken by all other players in state $s$ is the same as at time $t-1$. We are interested in understanding the stochastically stable states of this process. Namely we'd like to answer
+
+\begin{enumerate}
+\item In an SPG, are the stochastically stable states of this process simultaneously potential maximizing Nash equilibria?
+\item In an SPG, are the stochastically stable states of this process Nash equilibria?
+\end{enumerate}
+
+The following example will show that neither of these statements are necessarily true.
+
+
+\begin{eg}
+Consider the 3 state, 2-horizon game $\Gamma$ described as follows. $\Gamma$ is a two player game, and in each state both players have two actions $a$ and $b$. Every episode begins in state $s_1$ and transitions either to state $s_2$ or $s_3$ where the players take a final move and the episode ends. The stage games for $s_1$ and $s_3$ are trivial (that is, all utilities are zero) and the stage game for $s_2$ is defined by the bimatrix:
+
+\[
+\begin{blockarray}{ccc}
+ & a & b \\
+\begin{block}{c(cc)}
+  a & 100,100 & -100,100 \\
+  b & 100,-100 & -100,-100 \\
+\end{block}
+\end{blockarray}
+ \]
+
+Notice that by construction, all stage games are potential games with trivial potential functions $\phi \equiv 0$. The transition matrices are
+
+$$
+P_{12} = 
+\begin{pmatrix} 
+0 & 0.5 \\
+0.5 & 1 
+\end{pmatrix}
+$$
+
+and
+
+$$
+P_{13} = 
+\begin{pmatrix} 
+1 & 0.5 \\
+0.5 & 0. 
+\end{pmatrix}
+$$
+
+One can describe the pure Nash equilibria of this game as follows. Both players may act arbitrarily in state $s_3$ and $s_2$ (since all actions are potential maximizing in those states). However, the action to be taken in state $s_1$ is determined based on the action in $s_2$. The equilibria are:
+
+\[
+\begin{blockarray}{ccc}
+ s_1 & s_2 & s_3 \\
+\begin{block}{ccc}
+  (a,a) & (a,a) & (\cdot, \cdot) \\
+  (a,b) & (a,b) & (\cdot, \cdot) \\
+  (b,a) & (b,a) & (\cdot, \cdot) \\
+  (b,b) & (b,b) & (\cdot, \cdot) \\
+\end{block}
+\end{blockarray}
+ \]
+ 
+Where $(\cdot, \cdot)$ denotes that the players make perform any actions in $s_3$. 
+
+Now, suppose players adhere to log-linear learning as described above. Our goal is to show that the unperturbed process may move the behavior out of Nash equilibrium. Suppose at time $t$ the joint action is
+$$
+a^1(t) = [a, a, a]
+a^2(t) = [a, a, a]
+$$
+
+With positive probability, the following will occur at time t:
+\begin{itemize}
+\item state 2 is selected
+\item player 2 is selected
+\item player 2 changes their action from $a$ to $b$
+\end{itemize}
+
+But then the new joint action is
+$$
+a^1(t) = [a, a, a]
+a^2(t) = [a, b, a]
+$$
+
+which does not simultaneously maximize potentials, and is not a Nash equilibrium.
+
+\end{eg}
+
+The problem that this example brings forward is that an action change in a layer $k$ state may alter the continuation games played in layer $l < k$ states such that their behaviors are no longer Nash equilibria. This is exactly what happens in our example - asynchronous best response dynamics can alter the behavior in state $s_2$, which in turn changes the continuation game played at $s_1$ and what constitutes Nash equilibrium.
+
+
+
+\subsection{Log-Linear Learning with Inertia}
+
+To remedy the problem introduced in the last section, we first introduce a modified version of log-linear learning for {\em repeated} potential games. We call this modified version "log-linear learning with inertia". The idea of log-linear learning with inertia is to force players to eventually settle their behavior to a fixed pure Nash equilibrium. This will later allow us to build log-linear learning with inertia into an SPG learning algorithm. 
+
+\subsection{Generalized Log-Linear Learning with Inertia in Stochastic Potential Games}
+
+In the previous section we defined and proved convergence for log-linear learning with inertia. We showed that the stochastically stable states of this process are potential maximizers, and also that 
+
+
+
+
+
+
+% Feasible paths only travel backwards through layers. As long as behavior eventually settles to a particular equilibrium the learning algorithm should work. Within a layer, we perform learning until we're very close to a potential maximizer. have to bound how much the potential changes at last state. 
+
+

@@ -1,0 +1,296 @@
+\section{Empirical Results}
+
+Results are presented in table format. Entries with error bars are computed as follows. We run the learning method (SD-DQN or MD-DQN) 4 times, with each experiment differing only in random seed. For each run, once learning has appeared to converge, we average reward, pickup distance, and orders served percentages over 20 episodes. We then compute the average and error bars across the four runs. If no error bars are included, this means the table is showing results over a single run, with entries averaged over 20 episodes.
+
+\subsection{Static multi-driver assignment problem}
+
+The assignment problem \cite{munkres1957algorithms} is a combinatorial optimization problem defined by a {\em cost matrix}, where the $i-j^{\mathrm{th}}$ entry represents the cost of assigning the $i^{\mathrm{th}}$ row object to the $j^{\mathrm{th}}$ column object. The goal is to produce an assignment that minimizes the sum of costs. In the context of driver assignment, the assignment cost is given by the Euclidean distance between order $o^i$ and driver $d^j$. The assignment problem is the core subproblem for a dispatching problem with fixed windowing and a distance-minimization objective. An episode is initialized by a uniform random distribution of $k$ orders and $k$ drivers over the unit square. At each step, we choose a random driver, and the agent selects an order to match with the given driver. The reward associated to this action is the negative Euclidean distance between the driver-order pair. We do not perform discounting due to the static nature of the problem. 
+    
+% Exact solutions for the assignment problem can be computed in $O(mn^2)$ where $m$ is the number of drivers and $n$ the number of cities, using the Hungarian Algorithm. So, for small instances of the problem, approximate techniques are not necessary. However, neural networks offer attractive solutions when the problem is large as computation scales linearly in the number of assignments.
+
+The assignment problem is a particularly good environment for demonstrating the potential miscoordination of SD-DQN. For the single-driver approach, each transition ends in a terminal state, meaning that Q-learning reduces to one--step reward prediction. Therefore a policy which is greedy with respect to single driver Q-values will be suboptimal since it does not learn any coordination between drivers. On the other hand, an MD-DQN agent is concerned with maximizing the aggregate return across all drivers, and so should be capable of learning a better policy.
+% * <xiaocheng.t@gmail.com> 2018-08-14T01:25:24.164Z:
+% 
+% so in this case sddqn is randomly picking a driver and pairing it with the nearest order whereas mddqn is also randomly picking a driver but might not pair it with the nearest order thanks to its ability to learn coordination between drivers.  Instead of randomly selecting driver, did you try to compare sequentially selecting drivers based on some specific ordering and how much would the results change across different driver selecting schemas? Ideally mddqn should be invariant of the order we select driver for assignment, I think.
+% 
+% ^.
+
+Results are summarized in \cref{KM}. We show total distance traveled (that is, the sum of the distances of all assignments) for SD-DQN and MD-DQN when there are 20 orders and 20 drivers. We compare them to optimal solutions as well as {\em Random assignments}. The results reflect our intuition regarding the shortcomings of SD-DQN in sensitive coordination problems. Namely, SD-DQN performs quite a bit worse than MD-DQN. This emphasizes the innate desirability of MD-DQN---it is capable of learning more complex coordination behavior.
+
+\begin{center}
+\begin{table}
+\caption{20 driver 20 order static assignment problem}
+ \begin{tabular}{||c c||} 
+ \hline
+ policy &  total pickup distance\\ [0.5ex] 
+ \hline\hline
+ Random & $10.25$  \\ 
+ \hline
+ SD-DQN &  $4.83 \pm .06$ \\
+  \hline
+  MD-DQN &  $4.12 \pm .03$  \\
+ \hline
+ Optimal  & $3.82$ \\ [1ex]
+ \hline
+\end{tabular}
+\label{KM}
+\end{table}
+\end{center}
+
+\subsection{Dynamic Multi-Driver Dispatching Problems}
+
+The remaining experiments will focus on {\em dynamic} dispatching problems. In the dynamic setting, orders arrive at different times throughout an episode. Additionally, we are focused on ride-sharing, so orders now are defined by pickup {\em and} dropoff locations. When a driver is assigned to an order, it must first navigate to the pickup location and then travel to the dropoff location. We first present results on small domains where myopic policies are demonstrably suboptimal. Then, we apply the SD-DQN and MD-DQN approaches to a large-scale dispatching simulator derived from real-world data collected from DiDi Chuxing. We find that SD-DQN outperforms all other methods in the realistic simulators, but is occasionally worse than MD-DQN in illustrative domains. 
+
+\subsubsection{Illustrative domains with no repositioning}
+
+In this group of experiments, we use a simple dispatching simulator to show that both SD- and MD-DQN can learn good policies in two key scenarios where myopic behavior fails. The city is represented by the unit square. In these domains, at the start of a new episode, drivers are all located at a "dispatching depot" at position $[0.5, 0.5]$. Drivers travel at a constant speed of $.1$, and travel along straight lines from their initial position to the order pickup location, and then from order pickup to order dropoff location. Order arrivals are generated according to a Poisson distribution, with controllable parameter $\kappa$. In the following experiments, $\kappa$ is set to either $3$ or $10$ (that is, average order arrivals per unit time are either 3 or 10) to simulate "low demand" and "high demand" environments. The pickup and dropoff locations as well as the reward for an order are specified below for two different environment settings. An episode lasts 5000 timesteps.
+
+\subsubsection{Surge domain} The Surge domain illustrates an explicit, temporal effect caused by order pricing that cannot be exploited by myopic dispatchers. In the Surge domain, there are three regions: left, center, and right. One quarter of all orders go from the center to the upper-left region, one quarter from center to bottom-right, one quarter from upper-left to center, and one quarter from bottom-right to center. All orders yield a reward of 2 except those that go from right to center, which yield a reward of 4. For this domain, the best policy first assigns drivers to travel to the bottom-right region, and once they are there, assign them to the bonus reward trips back from right to center. A policy that minimizes pickup distance will fail to value trips to the bottom-right more than trips to top-left, and therefore yield suboptimal behavior. On the other hand, a policy which is greedy with respect to rewards will always select the bonus order regardless of driver location. In effect the policy "skips" the price 2 order that will ferry a driver out to the bottom-right region, and is therefore also suboptimal. An illustration of the surge domain can be found in the appendix.
+
+\subsubsection{Hot/Cold domain} In the Surge domain, the advantage of traveling to the bottom right region is clear; it is directly tied to the price of orders found in that region (4 vs. 2). In the Hot/Cold domain, the agent must learn a more subtle advantage. Order pickup locations are located uniformly along the top edge of the unit square, called the "hot region". Half of the orders end uniformly along the bottom edge of the unit square, called the "cold region" and half end uniformly in the hot region. Order price is given by the {\em Euclidean distance from order pickup to order dropoff locations}. The hot region can be thought of as a busy area of downtown, while the cold region represents surrounding suburbs. Despite orders to the cold region having higher price (since they are longer), it is generally more advantageous for drivers to stay in the hot region, since they can quickly pick up new orders. In other words, the advantage is entirely {\em temporal}. An illustration of the Hot/Cold domain can be found in the appendix. 
+
+We compare SD-DQN and MD-DQN with 3 other algorithms: myopic revenue maximization (MRM), myopic pickup distance minimization (MPDM), and local policy improvement (LPI). MRM always assigns the highest value order to an available driver. MPDM always assigns the closest order to an available driver. LPI \cite{xu2018large} discretizes the environment into a 20x20x144 spatiotemporal grid and performs tabular TD(0). We report average revenue, pickup distance, and served percentages with error bars over 100 episodes. Each episode lasts 5000 time units, which allows each driver to serve approximately 1000 orders. 
+
+Results can be found in \cref{tab:surge} and \cref{tab:hc}. There are a few key takeaways from these results. First, all learning methods, including LPI, outperform myopic strategies across the board. SD-DQN and MD-DQN also typically improve over LPI, though the margin is considerably smaller. Finally, it is not clear what situations favor SD-DQN vs. MD-DQN. For instance, one might expect SD-DQN to do comparatively better in high demand situations, where there would seem to be a reduced need for coordination, however this is not the case.
+\begin{center}
+\begin{table}
+\caption{Surge Domain}
+\resizebox{\columnwidth}{!}{%
+ \begin{tabular}{||c | c c c | c c c||} 
+ \hline
+ \multicolumn{1}{|c}{} & \multicolumn{3}{|c|}{Low Demand} & \multicolumn{3}{|c|}{High Demand} \\
+ \hline
+ Algorithm & Revenue & Pickup distance & Served \% & Revenue & Pickup distance & Served \%   \\ [0.5ex] 
+ \hline\hline
+ MRM & $29447$ & $.33$ & $73.6$ & $35939$ & $.54$ & $18.1$\\ 
+ \hline
+ MPDM & $32279$ & $.178$ & $86.3$ & $42842$ & $.016$ & $34.2$\\
+ \hline
+  LPI & $31112$ & $.245$ & $80.0$ & $50147$ & $.046$ & $33.6$ \\
+ \hline
+ SD-DQN & $31860 \pm 448$ & $.279 \pm .0005$ & $78.2 \pm .19$ & $50323 \pm 87$ & $.045 \pm .02$ & $33.54 \pm .09$ \\
+ \hline
+ MD-DQN & $33700 \pm 225$ & $.177 \pm .0001$ & $88.23 \pm .28$ & $49031 \pm 130$ & $.056 \pm .0012$ & $32.79 \pm .05$ \\ [1ex]
+ \hline 
+\end{tabular}
+}
+\label{tab:surge}
+\end{table}
+\end{center}
+
+\begin{center}
+\begin{table}
+\caption{Hot/Cold Domain}
+\resizebox{\columnwidth}{!}{%
+ \begin{tabular}{||c | c c c | c c c||} 
+ \hline
+ \multicolumn{1}{|c}{} & \multicolumn{3}{|c|}{Low Demand} & \multicolumn{3}{|c|}{High Demand} \\
+ \hline Algorithm & Revenue & Pickup distance & Served \% & Revenue & Pickup distance & Served \% \\ [0.5ex] 
+ \hline\hline
+ MRM & $50953$ & $1.04$ & $31.5$ & $52094$ & $1.11$ & $8.7$ \\ 
+ \hline
+ MPDM & $56546$ & $.535$ & $53.8$ & $58287$ & $.508$ & $16.5$\\
+ \hline
+ LPI & $58173$ & $.45$ & $60.64$ & $76840$ & $.1545$ & $30.06$\\
+ \hline
+ SD-DQN & $58580 \pm 124$ & $.4609 \pm .007$ & $59.26 \pm .13$ & $78552 \pm 212$ & $.1108 \pm .003$ & $39.25 \pm .04$ \\
+ \hline
+ MD-DQN &  $58893 \pm 181$ & $.5158 \pm .008$ & $52.97 \pm .027$ & $78860 \pm 285$ & $.111 \pm .012$ & $33.625 \pm 1.16$ \\ [1ex]
+ \hline 
+\end{tabular}
+}
+\label{tab:hc}
+\end{table}
+\end{center}
+
+\subsubsection{Illustrative Domains with Repositioning}
+
+Whereas the previous experiments only deal with dispatching, we now examine our methods on domains where drivers can both be dispatched and repositioned. 
+
+\subsubsection{Repositioning Hot/Cold Domain} The first such environment is the same as the previous Hot/Cold domain, except we impose a {\em broadcasting radius} $d_{bcast}$ on drivers. This means that drivers may only pair with orders if they are within $d_{bcast}$ units of the driver. Otherwise, the driver may only take a repositioning action. For this domain we set $d_{bcast}=0.3$ If a driver matches to an order that ends in the cold region, the agent must learn to reposition that driver from the cold region towards the hot region (which consists of approximately 4 consecutive "move up" repositioning actions) so the driver can pair with additional orders. As with the dispatch-only experiments, we present results for high and low demand regimes.
+% * <xiaocheng.t@gmail.com> 2018-08-14T20:39:42.852Z:
+% 
+% one would expect mddqn to outperform sddqn in the distribution domain given its ability to learn coordination between drivers. Looks like we have underfitting issues with mddqn.
+% 
+% ^.
+\begin{center}
+\begin{table}
+\caption{Hot/Cold with repositioning}
+\resizebox{\columnwidth}{!}{%
+ \begin{tabular}{||c | c c c | c c c||} 
+ \hline
+ \multicolumn{1}{|c}{} & \multicolumn{3}{|c|}{Low Demand} & \multicolumn{3}{|c|}{High Demand} \\
+ \hline Algorithm & Revenue & Pickup distance & Served \% & Revenue & Pickup distance & Served \% \\ [0.5ex] 
+ \hline\hline
+ MRM-random & $932$ & $.199$ & $4.2$ & $911 $ & $.177$ & $1.8$ \\ 
+ \hline
+ MPDM-random & $939$ & $.174$ & $8.1$ & $936$ & $.161$ & $2.5$\\
+ \hline
+ MRM-demand & $4861$ & $.180$ & $34.1$ & $4902$ & $.178$ & $8.1$\\
+ \hline
+ MPDM-demand & $5234$ & $.1624$ & $53.2$ & $5644$ & $.164$ & $15.9$\\
+ \hline
+ SD-DQN & $5478 \pm 188$ & $.1615 \pm .03$ & $57.5 \pm .31$ & $7387 \pm 41$ & $.0781 \pm .008$ & $33.8 \pm .43$ \\
+ \hline
+ MD-DQN &  $5717 \pm 213$ & $.1879 \pm .05$ & $54.5 \pm .25$ & $7309 \pm 56$ & $ .1519 \pm .04$ & $24.2 \pm .22$ \\ [1ex]
+ \hline 
+\end{tabular}
+\label{hcrep}
+}
+\end{table}
+\end{center}
+
+We compare our methods against two versions of MPDM with repositioning: MPDM-random and MPDM-demand. If a driver has no orders within broadcast distance, MPDM-random {\em randomly} selects a repositioning action, whereas MPDM-demand repositions the driver towards the nearest order. As we can see in \cref{hcrep}, SD-DQN and MD-DQN both maintain their advantage over baselines when required to learn repositioning and dispatching together. 
+
+\subsubsection{Distribute Domain} While Hot/Cold with repositioning tests an important aspect of learning---namely, the ability of MD-DQN and SD-DQN agents to reposition drivers to locations where they can pick up new orders, this repositioning behavior is quite simple in that it is {\em uniform across drivers}. This means that the agent can always reposition drivers in the same manner (i.e. "if in cold region, go to hot region"). In order to test whether our methods can learn non-uniform repositioning behavior, we introduce a class of ``Distribution environments'' where drivers must be repositioned so as to match their spatial distribution with a fixed future order distribution. A Distribute domain operates in two phases. In the first phase, the environment resets with $k$ drivers and no orders in the system, so drivers may only reposition during this phase. In the second phase, $k$ orders appear according to a fixed spatial distribution, and drivers can match to orders if they are within a given broadcast radius $d_{bcast}$. The second phase only lasts long enough to allow drivers to reposition one more time before all orders cancel and the environment is reset. We alter the reward function so that each order--matching action receives $+1$ reward. Order destinations are designed to be far away from start locations so that each driver may only serve one order per episode. As a result, the episodic return is proportional to the number of orders served, so we may interpret the episode score as a measure of how well the agent arranges driver supply in phase 1 with order demand in phase 2.
+
+In our experiments, the distribution of orders always consists of two small patches in the top left and bottom right parts of the unit square. The order start locations are sampled uniformly within each patch. The total number of orders in each patch is fixed across episodes, and we denote it fractionally. An even order split between patches (eg 10 orders in both patches) is denoted $50/50$. If 80 percent of orders are in the first patch and 20 percent are in the second patch, we denote it as $80/20$. Visualizations of the Distribute domain are in the appendix.
+
+Results for 20-driver Distribute domains are shown in \cref{distribute}. We include the optimal served percentage (which is 100 \%) and the ``uniform optimal'' served percentage. This quantity reflects the maximum score one can obtain if the repositioning behavior is uniform across drivers. SD- and MD-DQN are able to get near optimal test scores when the demand is balanced. However, in the $80/20$ task, only SD-DQN was able to escape the uniform optimum. For all experiments it was critical to allow for sustained high exploration. Specifically, in all experiments we used an $\epsilon$-greedy behavior policy where $\epsilon$ was linearly annealed epsilon from 1.0 to 0.2 over the first 1000 episodes. Test performance is averaged over 10 episodes. Also, we ran each experiment 4 times changing only the random seeds. We found that final performance across seeds was nearly identical in all experiments. Learning curves can be found in the appendix.
+
+We also used the distribute domain to test the saliency of global state information in the learning process of SD-DQN. Traditionally, independent learning in games assumes that agents only have a partial view of state at decision time \cite{fudenberg1998theory}. In contrast, SD-DQN receives full state information as input. We demonstrate the salience of global state through a small distribute domain in which there are 4 drivers and a $75/25$ split i.e., three orders appear in one region and 1 order appears in the other. We then trained SD-DQN with and without the inclusion of global context. Without global context, the network becomes stuck in the uniform optimal strategy that sends all drivers to the three--order region. A graph comparing served percentage with and without global state can be found in the appendix.
+
+\begin{center}
+\begin{table}
+\caption{Distribute Domain with 20 Drivers}
+\resizebox{\columnwidth}{!}{%
+ \begin{tabular}{||c | c | c ||}
+ \hline {\bf Algorithm} & 50/50 Served \% & 80/20 Served \% \\ [0.5ex] 
+ \hline
+ Optimal & $100 \% $ & $ 100 \% $ \\ 
+ \hline
+ Uniform Optimal & $50 \% $ & $80 \% $ \\
+ \hline
+ %SD-DQN (training) & $91 \% $ & $98 \% $  \\
+ %\hline
+  SD-DQN & $96 \pm .13 \% $ & $92 \pm .72 \%$  \\
+ \hline
+  %MD-DQN (training) & $88 \% $ & $78 \% $  \\
+ %\hline
+ MD-DQN &  $95 \pm .11 \%$ & $80 \pm 3.42 \% $ \\ [1ex]
+ \hline 
+\end{tabular}
+}
+\label{distribute}
+\end{table}
+\end{center}
+
+
+\subsubsection{Non-repositioning Historical-Statistics Real-World Domain}
+
+Finally, we test our method in more realistic dispatching environments. We refer to the first of these as the Historical-Statistics domain, because it derives distributional order and driver generation parameters from historical data. This first realistic simulator {\em does not include repositioning}. Specifically, we used 30 days of dispatching data from DiDi Chuxing's GAIA dataset \cite{gaia2017}, which contains spatial and temporal information for tens of millions of trips in one of the largest cities in China. To build the simulator from this data, we first covered the city in a square 20 by 20 grid, and extracted Poisson parameters $\kappa_{x,y,t}$ where $x$ is an order start tile, $y$ is an order end tile, and $t$ is the time of day in hours. This results in $400 \times 400 \times 24 = 3.84$ million parameters which we use to specify an order generation process. In addition to these, we also extract the average {\em ETA}, as well as its variance, for each $(x, y, t)$ triple. When a driver is assigned to an order, the simulator computes a Gaussian sample (using the historical mean and variance) of the ETA $t_1$ from the driver's position to the order's start location, and another sample of the ETA $t_2$ for the order's start location to the order's end location. The driver will become available at the order's end location in time $t_1 + t_2$. Orders price is equal to $\max(5, t_2)$, where $t_2$ is given in minutes. Driver entry and exit parameters are also derived from data. For each tile-hour triple $(x,y,t)$ we compute the poisson parameter from driver arrival, and the duration that the driver remains in the system is given by a poisson parameter that is a function only of $t$.
+
+To control computational costs we control the {\em scale} of the MDVDRP via a scaling parameter $0 < \lambda \leq 1$. All order and driver generation parameters are multiplied by $\lambda$. For example, a 1\% scaled environment means that we multiplied all generation parameters by 0.01. We present results for 3 scale regimes: .1\%, 1\% (\cref{tab:ss}), and 10\% (\cref{tab:ls}). For .1\% and 1\% we report values with standard errors across 100 episodes, and for 10\% we report values with standard error across 10 episodes. 
+
+Across all scales, SD-DQN outperforms both myopic baselines, while MD-DQN generally only performs slightly above myopic revenue maximization.
+% \textcolor{red}{[Refer to the tables.]}
+
+\begin{center}
+\begin{table}
+\caption{.1\% and 1\% scaled real data}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{||c | c c c | c c c||}
+\hline
+ \multicolumn{1}{|c}{} & \multicolumn{3}{|c|}{.1\% scale} & \multicolumn{3}{|c|}{1\% scale} \\
+ \hline
+ Algorithm & Revenue & Pickup ETA & Served \% & Revenue & Pickup ETA & Served \% \\ [0.5ex] 
+ \hline\hline
+ MRM & $10707$ & $22.74$ & $20.9$ & $117621$ & $22.32$ & $20.16$ \\ 
+ \hline
+ MPDM & $11477$ & $11.99$ & $31.6$ & $134454$ & $6.1$ & $36.79$ \\
+ \hline
+ %LPI & $11120 \pm 148$ & $18.03 \pm .04$ & $25.15 \pm .35$ & $130683 \pm 1501$ & $12.74 \pm .04$ & $32.38 \pm .37$ \\
+% \hline
+ SD-DQN & $12085 \pm 19$ & $19.15 \pm .16$ & $24.96 \pm .11$ & $146182 \pm 244$ & $15.07 \pm .11$ & $27.64 \pm .09$ \\
+ \hline
+ MD-DQN & $11145 \pm 78$ & $21.77 \pm .62$ & $21.38 \pm .32$ & $122671 \pm 698$ & $19.50 \pm .52$ & $22.14 \pm .76$ \\
+ \hline
+\end{tabular}
+}
+\label{tab:ss}
+\end{table}
+\end{center}
+
+\begin{center}
+\begin{table}
+\caption{10\% scaled real data}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{||c | c c c ||}
+ \hline
+ Algorithm & Revenue & Pickup ETA & Served \% \\ [0.5ex] 
+ \hline
+ MRM & $1112340$ & $22.37$ & $20.04$  \\ 
+ \hline
+ MPDM & $1333180$ & $6.2$ & $29.4$  \\
+ \hline
+ SD-DQN & $1391141$ & $17.28$ & $25.3$ \\
+ \hline
+ MD-DQN & $1161780$ & $20.05$ & $23.17 $\\
+ \hline
+\end{tabular}
+}
+\label{tab:ls}
+\end{table}
+\end{center}
+\subsubsection{Repositioning Historical-Order Real-World Domain}
+We also experiment with a simulator that uses historical days of orders instead of generating orders randomly from historical statistics. The GAIA dataset provides 30 days of orders in the city of Chengdu. We first found a small spatial region of Chengdu for which 10$\%$ of orders both start and end in that region. This region defined the historical data simulator. We then created 30 {\em order generation schemes}. Precisely, when the environment is reset, it randomly selects one of the 30 days, and generates orders exactly according to how orders arrived on that day. We used a fixed number of drivers (100), and a fixed speed (40 km/h). An illustration of this environment can be found in the appendix. For SD-DQN and MD-DQN, we impose a 2 kilometre broadcast radius. We compare performance against the standard non-repositioning baselines of myopic revenue maximization (MRM) and myopic pickup distance minimization (MPDM), both of which have no broadcast distance and no repositioning. We also compare against MPDM-random and MPDM-demand. The broadcast distance used in these repositioning baselines is 2 kilometers.
+
+We obtain the similar relative performance as the historical statistics domain, with MD-DQN performance above MRM but below MPDM, and SD-DQN outperforming all myopic strategies.  
+% \textcolor{red}{[How about MD-DQN since it is also included in Table 8?  Also, just looking at the results here, I'm wondering if we should include this paragraph at all.  Does Table 8 include repositioning while Tables 6 and 7 does not?  If so, this should be stated in the exposition.]}
+
+
+\begin{center}
+\begin{table}
+\caption{10\% region real data}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{||c | c c c ||}
+ \hline
+ Algorithm & Revenue & Pickup ETA & Served \% \\ [0.5ex] 
+ \hline
+ MRM & $ 414$ & $ 2.60$ & $ 44$  \\ 
+ \hline
+ MPDM & $ 511$ & $ 1.1$ & $ 79$  \\
+ \hline
+ MPDM-random & $494$ & $.9$ & $73$ \\
+ \hline
+ MPDM-demand & $502$ & $.8$ & $76$ \\
+ \hline
+ SD-DQN & $ 542$ & $ 1.2$ & $ 75$ \\
+ \hline
+  MD-DQN & $474$ & $1.8$ & $53$ \\
+ \hline
+\end{tabular}
+}
+\end{table}
+\end{center}
+
+
+
+% \subsection{Reward Factoredness}
+% We can view SD-DQN as an approach to a MARL problem, in which agents attempt to maximize their own individual utilities with the hope being that this maximizes a global/system utility. \cite{wolpert2002optimal,tumer2004time} construct two measures that are important for relating agent utilities and system utility. The first is reward factoredness, which is a measure of how aligned the utilities are. \textcolor{red}{[There is no 'second' later...]} Let $g^{i}(\pi)$ be the expected return of agent $i$ under joint deterministic policy $\pi$, and $G(\pi) = \sum_i g^{i}(\pi)$. Let $\pi'$ denote another policy that only differs in the actions taken by agent $i$. The formula for reward factoredness with respect to agent $i$ is:
+% $$
+% \mathcal{F}_i = \frac{\int_{\pi} \int_{\pi'} u([g^i(\pi)-g^i(\pi')] * [G(\pi) - G(\pi')]) d\pi d\pi'}{\int_{\pi} \int_{\pi'} 1d\pi d\pi'},
+% $$
+% where $u$ is the step function that evaluates to 0 when the input is negative and 1 when the input is nonnegative. So $\mathcal{F}_i$ simply measures the fraction of policy changes that change the system utility and agent $i$'s utility in the same direction. A system is fully factored if $\mathcal{F}_i = 1$ for all $i$. If a utility is not factored, it could mean that an agent can improve their own utility while hurting the system utility. 
+
+% Intuitively, we expect a highly factored environments to be amenable to independent learning, however a general theory has not developed. Still, we believe it is useful to examine the factoredness of our domains to see if it empirically aligns with SD-DQN performance.
+
+% *WE STILL NEED TO DECIDE EXACTLY WHAT TABLE TO PLACE HERE*
+% \textcolor{red}{It appears to me that you could compute this factoredness empirically by running multiple episodes with two policies differing only by one driver.  You could change this driver for different i's.}
+
+
+
+
+
+% With that being said, the integral in the numerator of $\mathcal{F}_i$ is intractable to compute, and so we instead approximate 
+% $$
+% \mathcal{F}_i(\pi) = \frac{\int_{\pi'} u([g^i(\pi)-g^i(\pi')] * [G(\pi) - G(\pi')]) d\pi'}{\int_{\pi} \int_{\pi'} 1 d\pi'}
+% $$
+
+\subsection{Conclusion}
+We performed a detailed empirical study of two reinforcement learning approaches to multi-driver vehicle dispatching and repositioning problems: single-driver Q-learning and multi-driver Q-learning. Both approaches leverage a global representation of state processed using attention mechanisms, but differ in the form of Q-learning update used. We found that, while one can construct environments where MD-DQN is superior, typically SD-DQN is competitive. Furthermore we applied these methods to domains built from real dispatching data, and found that SD-DQN is able to consistently beat myopic strategies across scales, as well as with and without repositioning actions.
+
+% \subsubsection{Future Work}
+
+% We plan to investigate strategies to extend MD-DQN to full-scale environments. One concrete direction is integrating hard constraints on the network via {\em order masking}. For instance, we could only allow the network to decide between the $k$-nearest orders to the available driver. Introducing such constraints may both accelerate and stabilize learning while leading to better final performance.
+% We also plan to explore methods for integrating dynamic pricing into our environment. 
